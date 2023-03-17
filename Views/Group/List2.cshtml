@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Split_Receipt.Models.User_Group>
+@{
+    ViewData["Title"] = "List2";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>List2</h1>
+
+
+<ol>
+    @foreach (var group_user in Model)
+    {
+        <li>
+            @group_user.ToString()
+        </li>
+    }
+</ol>
+

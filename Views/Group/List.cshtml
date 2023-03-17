@@ -1,0 +1,13 @@
+﻿@model IEnumerable<Split_Receipt.Models.Group>
+
+<h1>List of groups</h1>
+
+
+<ol>
+    @foreach (var group in Model)
+    {
+        <li>
+            @group.ToString()
+        </li>
+    }
+</ol>

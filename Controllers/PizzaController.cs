@@ -10,6 +10,8 @@ namespace Split_Receipt.Controllers
         [Authorize]
         public ActionResult Index()
         {
+            var userEmail = User.Identity.Name;
+            TempData["email"] = userEmail;
             return View();
         }
 

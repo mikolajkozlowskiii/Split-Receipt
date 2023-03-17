@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Split_Receipt.Areas.Identity.Data;
+using Split_Receipt.Models;
 
 namespace Split_Receipt.Data;
 
@@ -19,4 +20,7 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);
     }
+    public DbSet<Group> Groups { get; set; }
+    public DbSet<User_Group> User_Groups { get; set; }
+    public DbSet<Checkout> Checkouts { get; set; }
 }

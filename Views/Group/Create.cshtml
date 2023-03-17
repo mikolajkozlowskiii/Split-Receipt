@@ -1,0 +1,16 @@
+﻿@model Split_Receipt.Models.Group
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create group</h1>
+
+@using (Html.BeginForm("Create", "Group", FormMethod.Post))
+{
+    @Html.ValidationSummary()
+
+    <span>Nazwa grupy:</span> @Html.TextBoxFor(x=>x.Name)
+    <button type="submit">Dodaj produkt</button>
+}
