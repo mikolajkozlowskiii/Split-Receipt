@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Split_Receipt.Areas.Identity.Data;
 using Split_Receipt.Data;
+using Split_Receipt.Services;
+using Split_Receipt.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AuthDbContextConnection") ?? throw new InvalidOperationException("Connection string 'AuthDbContextConnection' not found.");
 
@@ -18,6 +21,9 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireDigit = false;
     options.Password.RequireNonAlphanumeric = false;
 });
+
+builder.Services.AddScoped<IGroupService, GroupService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

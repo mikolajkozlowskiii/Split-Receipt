@@ -1,4 +1,5 @@
 ﻿using Split_Receipt.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Split_Receipt.Models
 {
@@ -8,28 +9,16 @@ namespace Split_Receipt.Models
         {
         }
 
-        public User_Group(int id, string userId, int groupId, string userEmail)
-        {
-            Id = id;
-            UserId = userId;
-            GroupId = groupId;
-            UserEmail = userEmail;
-            //User = user;
-            //Group = group;
-        }
-        public User_Group(int groupId, string userEmail)
+        public User_Group(int groupId, string userId) // zmiana parametru z UserEmail na UserId
         {
             GroupId = groupId;
-            UserEmail = userEmail;
-            //User = user;
-            //Group = group;
+            UserId = userId; // zmiana pola z UserEmail na UserId
         }
+    
 
         public int Id { get; set; }
 
-        //klucze obce
-        public string UserId { get ; set; }
-        public string UserEmail { get; set; }
+        public string UserId { get; set; }
         public int GroupId { get; set; }
 
         //nawigacja
@@ -38,7 +27,8 @@ namespace Split_Receipt.Models
 
         public override string? ToString()
         {
-            return Id + ", " + UserId + ", " + GroupId;
+            string userEmail = User != null ? User.Email : "null";
+            return "Id: " + Id + ", UserId: " + UserId + ", GroupId: " + GroupId + ", User: " + userEmail;
         }
     }
 }

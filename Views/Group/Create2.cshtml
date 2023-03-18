@@ -1,16 +1,21 @@
 ﻿@model Split_Receipt.Payload.UserGroupRequest
 
+@{
+    ViewData["Title"] = "Create2";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
 <h2>Create a new group</h2>
 
-<form asp-controller="ExampleController" asp-action="ExampleAction" method="post">
+<form asp-controller="Group" asp-action="Create2" method="post">
     <div class="form-group">
         <label asp-for="GroupName" class="control-label"></label>
         <input asp-for="GroupName" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="emails" class="control-label"></label>
-        <textarea asp-for="emails" class="form-control"></textarea>
+        <label asp-for="Emails" class="control-label"></label>
+        <textarea asp-for="Emails" class="form-control"></textarea>
         <small class="form-text text-muted">Separate multiple emails with commas</small>
     </div>
 

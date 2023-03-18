@@ -1,19 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Split_Receipt.Areas.Identity.Data;
 using Split_Receipt.Data;
 using Split_Receipt.Models;
 using Split_Receipt.Payload;
+using Split_Receipt.Services;
+using Split_Receipt.Services.Interfaces;
+using System;
 using System.Drawing.Drawing2D;
 
 namespace Split_Receipt.Controllers
 {
     public class GroupController : Controller
     {
-        private readonly AuthDbContext _appContext;
+        private readonly IGroupService _groupService;
 
-        public GroupController(AuthDbContext appContext)
+        public GroupController(IGroupService groupService)
         {
-            _appContext = appContext;
+            _groupService = groupService;
         }
 
         public IActionResult Index()
@@ -23,7 +29,7 @@ namespace Split_Receipt.Controllers
         [HttpGet]
         public IActionResult List()
         {
-            var groups = _appContext.Groups.ToList();
+            var groups = _groupService.GetAll();
             return View(groups);
         }
 
@@ -44,13 +50,7 @@ namespace Split_Receipt.Controllers
                 return View(body);
             }
 
-
-            _appContext.Groups.Add(body);
-            if (_appContext.SaveChanges() > 0)
-            {
-                Console.WriteLine("Succes");
-            };
-
+            _groupService.Save(body);
 
             return RedirectToAction("List");
         }
@@ -61,15 +61,10 @@ namespace Split_Receipt.Controllers
 
 
 
-
-
-
-
-
         [HttpGet]
-        public IActionResult List2()
+        public async Task<IActionResult> List2()
         {
-            var user_groups = _appContext.User_Groups.ToList();
+            var user_groups = await _groupService.GetAllUserGroups();
             return View(user_groups);
         }
 
@@ -82,58 +77,32 @@ namespace Split_Receipt.Controllers
 
 
         [HttpPost]
-        public IActionResult Create2(UserGroupRequest body)
+        public IActionResult Create2(UserGroupRequest body) // SHOULD CHECK _groupService.Save(modifiedRequest, loggedUserEmail); IS >=2 MEMBERS IN GROUP, IF NOT SHOULD RETURN BOOLEAN AND THERE WE SHOULD THROW PROPER ACTION
         {
-            String groupName = body.GroupName;
-            /*
-             STWORZENIE GRUPY
-             */
-            Group group = new Group();
-            group.Name = groupName;
-            _appContext.Groups.Add(group);
-         
-            //mozliwe ze sie tutaj juz dodalo autmatycznie Id do group jak nie to trzeba szuakc ta grupe innymi sposobami
+            //string[] emailsArray = userGroupRequest.emails.Split(",");
+            //ICollection<string> emailsList = new List<string>(emailsArray);
+            string emails = body.Emails.FirstOrDefault();
 
-            ICollection<string> memebers = new List<string>();
-            foreach (var email in body.emails)
-            {
-                // znajdz konto po emailu, pobierz jego id
-                //w przeciwnym wypadku wyrzuc blad jak nie znajdziesz konta
-                //oczywiscie jeszcze walidacja 
-                User_Group userGroup = new User_Group(group.Id, email);
-                _appContext.User_Groups.Add(userGroup);
-            }
-            //dodanie jeszcze jednego uzytkopwnika do user_groups -> tego co to stworzyl
-            
+            var emailList =emails.Split(",").Select(e => e.Trim()).ToList();
 
-            if (ModelState.IsValid || String.IsNullOrEmpty(body.GroupName))
+            // tworzenie nowego obiektu UserGroupRequest z poprawioną listą emaili
+            var modifiedRequest = new UserGroupRequest(body.GroupName, emailList);
+            foreach (var email in modifiedRequest.Emails)
+            if (!ModelState.IsValid)
             {
                 return View(body);
             }
-
-
-           // _appContext.Groups.Add(body);
-            if (_appContext.SaveChanges() > 0)
-            {
-                Console.WriteLine("Succes");
-            };
+            var loggedUserEmail = User.Identity.Name;
+            _groupService.Save(modifiedRequest, loggedUserEmail);
 
 
             return RedirectToAction("List2");
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }
+//TODO
+//REPAIR CREATE 2 (FIRST COMMENT)
+//SHOULD BE [AUTHORIZE] AND RETURN ONLY GROUPS WHERE YOU BELONG TO AND NAME SHOULD BE YOUR GROUPS
+//ADD VALIDATION IN VIEW, TO USER'S KNOW WHAT IS HE DOING WRONG
