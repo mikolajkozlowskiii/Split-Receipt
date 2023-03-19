@@ -11,8 +11,10 @@ namespace Split_Receipt.Payload
             GroupName = name;
             this.Emails = emails;
         }
+
         [Required]
         public string GroupName { get; set; }
+        // [ExistingEmails(ErrorMessage = "All emails must be existing users in the system")]
         [Required]
         public List<String> Emails { get; set; }
 

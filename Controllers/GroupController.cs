@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -16,10 +17,12 @@ namespace Split_Receipt.Controllers
     public class GroupController : Controller
     {
         private readonly IGroupService _groupService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public GroupController(IGroupService groupService)
+        public GroupController(IGroupService groupService, UserManager<ApplicationUser> userManager)
         {
             _groupService = groupService;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -68,6 +71,15 @@ namespace Split_Receipt.Controllers
             return View(user_groups);
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> YourGroups()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var user_groups = await _groupService.FindAllUserGroupsByUserId(user.Id);
+            return View(user_groups);
+        }
+
 
         [HttpGet]
         public IActionResult Create2()
@@ -77,32 +89,44 @@ namespace Split_Receipt.Controllers
 
 
         [HttpPost]
-        public IActionResult Create2(UserGroupRequest body) // SHOULD CHECK _groupService.Save(modifiedRequest, loggedUserEmail); IS >=2 MEMBERS IN GROUP, IF NOT SHOULD RETURN BOOLEAN AND THERE WE SHOULD THROW PROPER ACTION
+        public async Task<IActionResult> Create2(UserGroupRequest body) 
         {
-            //string[] emailsArray = userGroupRequest.emails.Split(",");
-            //ICollection<string> emailsList = new List<string>(emailsArray);
-            string emails = body.Emails.FirstOrDefault();
-
-            var emailList =emails.Split(",").Select(e => e.Trim()).ToList();
-
-            // tworzenie nowego obiektu UserGroupRequest z poprawioną listą emaili
-            var modifiedRequest = new UserGroupRequest(body.GroupName, emailList);
-            foreach (var email in modifiedRequest.Emails)
+  
             if (!ModelState.IsValid)
             {
                 return View(body);
             }
+
+            string emails = body.Emails.FirstOrDefault();
+            List<String> emailList = new List<string>();
+            if (!String.IsNullOrEmpty(emails))
+            {
+                emailList = emails.Split(",").Select(e => e.Trim()).ToList();
+            }
+            
+
+            var modifiedRequest = new UserGroupRequest(body.GroupName, emailList);
+
+            
             var loggedUserEmail = User.Identity.Name;
-            _groupService.Save(modifiedRequest, loggedUserEmail);
+            var succesful = await _groupService.Save(modifiedRequest, loggedUserEmail);
 
-
-            return RedirectToAction("List2");
+            if (succesful)
+            {
+                return RedirectToAction("YourGroups");
+            }
+            return View(body);
         }
-
-
     }
 }
 //TODO
 //REPAIR CREATE 2 (FIRST COMMENT)
-//SHOULD BE [AUTHORIZE] AND RETURN ONLY GROUPS WHERE YOU BELONG TO AND NAME SHOULD BE YOUR GROUPS
+//SHOULD BE [AUTHORIZE] AND RETURN ONLY GROUPS WHERE YOU BELONG TO AND NAME SHOULD BE: YOUR GROUPS
 //ADD VALIDATION IN VIEW, TO USER'S KNOW WHAT IS HE DOING WRONG
+
+///*
+///wchodzisz na groups i przechodzisz do details -> tam do kazdej grupy wyswietla sie paragony
+//czyli kontroler ktory jako argument pobiera group Id (do userGroupResponse przekazywac Id ale nie wyswietlac w stringu?) i wyswietla wszystkie paragony gdzie groupId = sie wlasnie to groupId
+//na gorze w zaleznosc od tego jakim userem jestes bedzie pokazane czy jestes na plusie czy na minusie i ile i domyslna waluta zlotowki, ale bedzie mozna zmienic
+/// 
+/// */

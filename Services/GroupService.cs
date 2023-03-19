@@ -42,7 +42,30 @@ namespace Split_Receipt.Services
             return _appContext.SaveChanges();
         }
 
+        public async Task<List<UserGroupResponse>> FindAllUserGroupsByUserId(string userId)
+        {
+            var userGroupsId = _appContext.User_Groups
+                                            .Where(x => x.UserId == userId)
+                                            .Select(x => x.GroupId)
+                                            .ToList();
 
+            List<User_Group> allUserGroups = _appContext.User_Groups.Where(x => userGroupsId.Contains(x.GroupId)).ToList(); // wszystkie serGroup
+
+            List<UserGroupResponse> userGroupResponses = new List<UserGroupResponse>();
+            foreach (User_Group userGroup in allUserGroups)
+            {
+                Group group = _appContext.Groups.Find(userGroup.GroupId);
+                String groupName = group.Name;
+                int groupId = group.Id;
+                var user = await _userManager.FindByIdAsync(userGroup.UserId);
+                if (user != null)
+                {
+                    string email = user.Email;
+                    userGroupResponses.Add(new UserGroupResponse(groupId, groupName, email));
+                }
+            }
+            return userGroupResponses;
+        }
 
         public async Task<List<UserGroupResponse>> GetAllUserGroups()
         {
@@ -50,12 +73,14 @@ namespace Split_Receipt.Services
             List<UserGroupResponse> userGroupResponses = new List<UserGroupResponse>();
             foreach(User_Group userGroup in userGroups)
             {
-                String groupName = _appContext.Groups.Find(userGroup.GroupId).Name;
+                Group group = _appContext.Groups.Find(userGroup.GroupId);
+                String groupName = group.Name;
+                int groupId = group.Id;
                 var user = await _userManager.FindByIdAsync(userGroup.UserId);
                 if (user != null)
                 {
                     string email = user.Email;
-                    userGroupResponses.Add(new UserGroupResponse(groupName, email));
+                    userGroupResponses.Add(new UserGroupResponse(groupId, groupName, email));
                 }
             }
             return userGroupResponses;
@@ -68,16 +93,12 @@ namespace Split_Receipt.Services
             return 1;
         }
 
-        public async void Save(UserGroupRequest request, string emailOfLoggedUser)
+        public async Task<Boolean> Save(UserGroupRequest request, string emailOfLoggedUser)
         {
             List<User_Group> userGroups = new List<User_Group>();
             HashSet<String> emails = new HashSet<string>();
-
-            String groupName = request.GroupName;
-            Group group = new Group();
-            group.Name = groupName;
-            Save(group);
-            int groupId = group.Id;
+        
+            int groupId = createGroup(request).Id;
 
             // adding current logged in user
             var user = await _userManager.FindByEmailAsync(emailOfLoggedUser);
@@ -90,21 +111,19 @@ namespace Split_Receipt.Services
             foreach (var email in request.Emails)
             {
                 user = await _userManager.FindByEmailAsync(email);
-                if(user != null)
+                if (user != null)
                 {
                     bool isUserInGroup = _appContext.User_Groups.Any(x => x.Id == groupId && x.UserId == user.Id);
                     if (!isUserInGroup)
                     {
-                        //User_Group userGroup = new User_Group(groupId, user.Id);
-                        // userGroups.Add(userGroup);
                         emails.Add(email);
                     }
                 }
             }
 
-            if (_appContext.SaveChanges() > 0)
+            if(emails.Count < 2) // group without more than 1 memeber = useless
             {
-                Console.WriteLine("Success");
+                return false;
             }
 
             foreach (var email in emails)
@@ -112,7 +131,18 @@ namespace Split_Receipt.Services
                 user = await _userManager.FindByEmailAsync(email);
                 userGroups.Add(new User_Group(groupId, user.Id));
             }
+
             Save(userGroups);
+            return true;
         }
+
+        private Group createGroup(UserGroupRequest request)
+        {
+            String groupName = request.GroupName;
+            Group group = new Group();
+            group.Name = groupName;
+            Save(group);
+            return group;
+        } 
     }
 }

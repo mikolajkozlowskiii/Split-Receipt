@@ -10,12 +10,12 @@
 <form asp-controller="Group" asp-action="Create2" method="post">
     <div class="form-group">
         <label asp-for="GroupName" class="control-label"></label>
-        <input asp-for="GroupName" class="form-control" />
+        <input asp-for="GroupName" class="form-control" placeholder="Group must have name" />
     </div>
 
     <div class="form-group">
         <label asp-for="Emails" class="control-label"></label>
-        <textarea asp-for="Emails" class="form-control"></textarea>
+        <textarea asp-for="Emails" class="form-control" placeholder="All emails must be existing users in the system"></textarea>
         <small class="form-text text-muted">Separate multiple emails with commas</small>
     </div>
 

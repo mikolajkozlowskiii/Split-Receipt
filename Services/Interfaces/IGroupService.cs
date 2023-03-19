@@ -12,7 +12,8 @@ namespace Split_Receipt.Services.Interfaces
         int Save(Group group);
 
         Task<List<UserGroupResponse>> GetAllUserGroups();
-        void Save(UserGroupRequest request, string emailOfLoggedUser);
+        Task<List<UserGroupResponse>> FindAllUserGroupsByUserId(string userId);
+        Task<Boolean> Save(UserGroupRequest request, string emailOfLoggedUser);
         int Save(List<User_Group> userGroups);
     }
 }
