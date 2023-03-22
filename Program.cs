@@ -23,7 +23,12 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 builder.Services.AddScoped<IGroupService, GroupService>();
-
+builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+builder.Services.AddHttpClient("currency-api", c => 
+{
+    c.BaseAddress = new Uri("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/");
+    c.DefaultRequestHeaders.Add("Accept", "application/json");
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
