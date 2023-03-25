@@ -24,6 +24,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+builder.Services.AddScoped<ICheckoutService,  CheckoutService>();
 builder.Services.AddHttpClient("currency-api", c => 
 {
     c.BaseAddress = new Uri("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/");
@@ -46,5 +47,22 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+/*
+app.MapControllerRoute(
+    name: "checkout",
+    pattern: "Checkouts/SaveCheckout/{groupId?}",
+    defaults: new { controller = "Checkout", action = "SaveCheckout" });
+
+*/
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "checkout",
+        pattern: "Checkouts/SaveCheckout/{groupId?}",
+        defaults: new { controller = "Checkout", action = "SaveCheckout" });
+
+    endpoints.MapControllers();
+    endpoints.MapRazorPages();
+});
 
 app.Run();

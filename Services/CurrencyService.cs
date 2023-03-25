@@ -7,6 +7,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace Split_Receipt.Services
 {
@@ -37,6 +38,17 @@ namespace Split_Receipt.Services
             }
 
             return null;
+        }
+        public async Task<Decimal> GetRate(string currencyBase, string quoteCurrency)
+        {
+            if (quoteCurrency.Equals(currencyBase))
+            {
+                throw new ArgumentException("Currency Base and Quote Currency cannot be the same.");
+            }
+            var currencyData = await GetCurrencyData(currencyBase);
+            decimal value;
+            currencyData.Rates.TryGetValue(quoteCurrency, out value);
+            return value;
         }
     }
     

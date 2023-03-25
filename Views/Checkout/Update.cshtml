@@ -1,0 +1,44 @@
+﻿@using Split_Receipt.Payload
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model Split_Receipt.Payload.CheckoutRequest
+
+<h2>Update Checkout</h2>
+
+<form method="post" asp-controller="Checkout" asp-action="Update" asp-route-groupId="@ViewBag.CheckoutId">
+    <div class="form-group">
+        <label asp-for="Price"></label>
+        <input asp-for="Price" class="form-control" value="@Model.Price" />
+        <div class="form-group">
+            <label asp-for="Currency"></label>
+            <select asp-for="Currency" class="form-control">
+                <option value="PLN" selected="@Model.Currency == " PLN"">PLN</option>
+                <option value="EUR" selected="@Model.Currency == " EUR"">EUR</option>
+                <option value="USD" selected="@Model.Currency == " USD"">USD</option>
+                <option value="GBP" selected="@Model.Currency == " GBP"">GBP</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="IsSplitted"></label>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" asp-for="IsSplitted" value="True" checked="@Model.IsSplitted" /> Yes
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" asp-for="IsSplitted" value="False" checked="@(Model.IsSplitted == false ? "checked" : null)" /> No
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Description"></label>
+            <input asp-for="Description" class="form-control" value="@Model.Description" />
+        </div>
+
+        <input type="hidden" name="checkoutId" value="@ViewBag.checkoutId" />
+        <button type="submit" formaction="/Checkout/Update/@ViewBag.checkoutId">Update</button>
+        <a asp-controller="Checkout" asp-action="GetAllCheckoutsByGroupId" asp-route-groupId="@ViewBag.checkoutId" class="btn btn-primary">Cancel</a>
+    </div>
+</form>

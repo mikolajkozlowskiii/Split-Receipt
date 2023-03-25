@@ -35,5 +35,10 @@ namespace Split_Receipt.Models
         //nawigacja
         public virtual ApplicationUser User { get; set; }
         public virtual Group Group { get; set; }
+
+        public override string? ToString()
+        {
+            return "Id: " + Id + ", Price" + Price + ", Currency" + Currency + ", IsSplitted " + IsSplitted + ", Description: " + Description;
+        }
     }
 }

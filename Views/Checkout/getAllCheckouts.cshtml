@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Split_Receipt.Payload.CheckoutResponse>
+@{
+    ViewData["Title"] = "getAllCheckouts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>All checkouts</h1>
+
+
+<ol>
+    @foreach(var checkout in Model)
+    {
+        <li>
+            @checkout.ToString();
+        </li>
+    }
+</ol>
+
+
+
+

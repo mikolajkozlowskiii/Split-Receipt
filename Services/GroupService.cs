@@ -143,6 +143,12 @@ namespace Split_Receipt.Services
             group.Name = groupName;
             Save(group);
             return group;
-        } 
+        }
+
+        public bool CheckIsUserInGroup(string userId, int groupId)
+        {
+            bool isUserInGroup = _appContext.User_Groups.Any(x => x.GroupId == groupId && x.UserId == userId);
+            return  isUserInGroup;
+        }
     }
 }

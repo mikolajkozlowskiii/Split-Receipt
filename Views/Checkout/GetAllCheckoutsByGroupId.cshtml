@@ -1,0 +1,13 @@
+﻿@model IEnumerable<Split_Receipt.Payload.CheckoutResponse>
+
+<h1>Checkouts for this group</h1>
+
+
+<ol>
+    @foreach (var checkout in Model)
+    {
+        <li>
+            @checkout.ToString();
+        </li>
+    }
+</ol>
