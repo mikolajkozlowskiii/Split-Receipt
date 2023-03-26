@@ -150,5 +150,24 @@ namespace Split_Receipt.Services
             bool isUserInGroup = _appContext.User_Groups.Any(x => x.GroupId == groupId && x.UserId == userId);
             return  isUserInGroup;
         }
+
+        public async Task<List<String>> GetAllMembersIDs(int groupId)
+        {
+            return _appContext.User_Groups
+                                           .Where(x => x.GroupId == groupId)
+                                           .Select(x => x.UserId)
+                                           .ToList();
+        }
+        public async Task<List<String>> GetAllMembersEmails(int groupId)
+        {
+            var membersId = await GetAllMembersIDs(groupId);
+            List<String> emails = new List<string>();
+            foreach (var id in membersId)
+            {
+                var user = await _userManager.FindByIdAsync(id);
+                emails.Add(user.Email);
+            }
+            return emails;
+        }
     }
 }

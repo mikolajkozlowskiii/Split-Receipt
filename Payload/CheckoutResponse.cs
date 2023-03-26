@@ -16,7 +16,7 @@
             UserId = userId;
             GroupId = groupId;
         }
-
+        public int CheckoutId { get; set; }
         public string UserEmail { get; set; }
         public decimal Price { get; set; }
         public string Currency { get; set; }

@@ -12,11 +12,16 @@ namespace Split_Receipt.Services
     {
         private readonly AuthDbContext _appContext;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IGroupService _groupService;
+        private readonly ICurrencyService _currencyService;
 
-        public CheckoutService(AuthDbContext appContext, UserManager<ApplicationUser> userManager)
+        public CheckoutService(AuthDbContext appContext, UserManager<ApplicationUser> userManager,
+            IGroupService groupService, ICurrencyService currencyService)
         {
             _appContext = appContext;
             _userManager = userManager;
+            _groupService = groupService;
+            _currencyService = currencyService;
         }
 
         public int delete(int id)
@@ -47,6 +52,7 @@ namespace Split_Receipt.Services
             response.UserEmail = email;
             response.GroupId = checkout.GroupId;
             response.UserId = checkout.UserId;
+            response.CheckoutId = checkout.Id;
             return response;
         }
 
@@ -69,6 +75,7 @@ namespace Split_Receipt.Services
                 response.Price = checkout.Price;
                 response.Description = checkout.Description;
                 response.UserEmail = user.Email;
+                response.CheckoutId = checkout.Id;
 
                 responses.Add(response);
             }
@@ -132,6 +139,56 @@ namespace Split_Receipt.Services
         {
             bool isUserInCheckout = _appContext.Checkouts.Any(x => x.UserId == UserId && x.Id == checkoutId);
             return isUserInCheckout;
+        }
+
+        public async Task<CheckoutSummary> getCheckoutSummary(string userEmail, string currencyBase, int groupId)
+        {
+            List<string> members = await _groupService.GetAllMembersEmails(groupId);
+            List<CheckoutResponse> allCheckouts = await getAllByGroupID(groupId);
+            var groupName = _groupService.Get(groupId).Name;
+            int numOfMemebers = members.Count();
+            decimal total = await ComputeTotalBalance(userEmail, currencyBase, numOfMemebers, allCheckouts);
+
+            CheckoutSummary checkoutSummary = new CheckoutSummary();
+            checkoutSummary.Email = userEmail;
+            checkoutSummary.GroupName = groupName;
+            checkoutSummary.Checkouts = allCheckouts;
+            checkoutSummary.Total = total;
+            checkoutSummary.Currency = currencyBase.ToUpper();
+            checkoutSummary.Members = members;
+            return checkoutSummary;
+        }
+
+        private async Task<decimal> ComputeTotalBalance(string userEmail, string currencyBase, int numOfMemebers, List<CheckoutResponse> checkouts)
+        {
+            decimal total = 0;
+            foreach (var checkout in checkouts)
+            {
+                decimal rate = 1;
+                if (!currencyBase.Equals(checkout.Currency))
+                {
+                    rate = await _currencyService.GetRate(currencyBase, checkout.Currency);
+                }
+                decimal currentPrice = checkout.Price;
+                if (checkout.IsSplitted)
+                {
+                    currentPrice = currentPrice / numOfMemebers;
+                }
+                else
+                {
+                    currentPrice = currentPrice / (numOfMemebers - 1);
+                }
+                if (userEmail.Equals(checkout.UserEmail))
+                {
+                    total = total + currentPrice / rate;
+                }
+                else
+                {
+                    total = total - currentPrice / rate;
+                }
+
+            }
+            return total;
         }
     }
 }

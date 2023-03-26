@@ -6,7 +6,7 @@ using Split_Receipt.Models;
 
 namespace Split_Receipt.Data;
 
-public class AuthDbContext : IdentityDbContext<ApplicationUser>
+public class AuthDbContext : IdentityDbContext<ApplicationUser>  
 {
     public AuthDbContext(DbContextOptions<AuthDbContext> options)
         : base(options)

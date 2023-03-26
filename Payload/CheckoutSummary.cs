@@ -14,8 +14,11 @@
         }
 
         public string Email { get; set; }
+        public string Currency { get; set; }
+        public string GroupName { get; set; }
         public decimal Total { get; set; }
         public List<CheckoutResponse> Checkouts { get; set; }
+        public List<String> Members { get; set; }
 
     }
 }

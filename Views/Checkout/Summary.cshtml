@@ -1,0 +1,43 @@
+﻿@model Split_Receipt.Payload.CheckoutSummary
+
+<h2>@Model.GroupName</h2>
+<div style="display: flex; justify-content: space-between">
+    <div style="font-weight: bold; color: @((Model.Total > 0) ? "green" : (Model.Total < 0) ? "red" : "black")">TOTAL: @Model.Total.ToString("N2")</div>
+    <div>
+        @Html.DropDownList("currency", new SelectList(new List<string> { "PLN", "GBP", "USD", "EUR" }, Model.Currency), new { onchange = "updateCurrency()" })
+    </div>
+</div>
+<div>Members: @string.Join(", ", Model.Members)</div>
+
+<ul>
+    @foreach (var checkout in Model.Checkouts)
+    {
+        if (checkout.UserEmail == Model.Email)
+        {
+            <li>
+                @checkout.UserEmail: @checkout.Description - @checkout.Price @checkout.Currency, is splitted: @checkout.IsSplitted, id: @checkout.CheckoutId
+                <div>
+                    <form method="get" action="@Url.Action("Delete", new { checkoutId = checkout.CheckoutId })">
+                        <button type="submit">DELETE</button>
+                    </form>
+                    <form method="get" action="@Url.Action("Update", new { checkoutId = checkout.CheckoutId })">
+                        <button type="submit">UPDATE</button>
+                    </form>
+                </div>
+            </li>
+        }
+        else
+        {
+            <li>@checkout.UserEmail: @checkout.Description - @checkout.Price @checkout.Currency, is splitted: @checkout.IsSplitted, id: @checkout.CheckoutId</li>
+        }
+    }
+</ul>
+
+<script>
+    function updateCurrency() {
+        var selectedValue = document.getElementById("currency").value;
+        var url = "@Url.Action("Summary", new { groupId = (int)ViewBag.GroupId })";
+        url += "&currencyBase=" + encodeURIComponent(selectedValue);
+        window.location.href = url;
+    }
+</script>
