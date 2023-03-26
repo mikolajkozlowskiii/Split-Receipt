@@ -122,6 +122,7 @@ namespace Split_Receipt.Controllers
 
 
 
+
         [Authorize]
         [HttpGet]
         [Route("Checkout/Update/{checkoutId}")]
@@ -129,8 +130,8 @@ namespace Split_Receipt.Controllers
         {
             var checkout = await _checkoutService.get(checkoutId);
             ViewBag.CheckoutId = checkoutId;
-            ViewBag.Checkout = checkout;
-
+            ViewBag.GroupId = checkout.GroupId;
+            
             CheckoutRequest request = new CheckoutRequest();
             request.Currency = checkout.Currency;
             request.Description = checkout.Description;

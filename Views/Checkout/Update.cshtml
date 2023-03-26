@@ -39,6 +39,11 @@
 
         <input type="hidden" name="checkoutId" value="@ViewBag.checkoutId" />
         <button type="submit" formaction="/Checkout/Update/@ViewBag.checkoutId">Update</button>
-        <a asp-controller="Checkout" asp-action="GetAllCheckoutsByGroupId" asp-route-groupId="@ViewBag.checkoutId" class="btn btn-primary">Cancel</a>
+ 
+     
+        <form method="get" action="@Url.Action("Summary", new { groupId = ViewBag.GroupId, currencyBase = "PLN" })">
+            <button type="submit">CANCEL</button>
+        </form>
+
     </div>
 </form>

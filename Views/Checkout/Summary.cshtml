@@ -1,13 +1,23 @@
 ﻿@model Split_Receipt.Payload.CheckoutSummary
 
-<h2>@Model.GroupName</h2>
+<h1>@Model.GroupName</h1>
 <div style="display: flex; justify-content: space-between">
     <div style="font-weight: bold; color: @((Model.Total > 0) ? "green" : (Model.Total < 0) ? "red" : "black")">TOTAL: @Model.Total.ToString("N2")</div>
-    <div>
+    <div style="display: inline-block;">
         @Html.DropDownList("currency", new SelectList(new List<string> { "PLN", "GBP", "USD", "EUR" }, Model.Currency), new { onchange = "updateCurrency()" })
     </div>
 </div>
 <div>Members: @string.Join(", ", Model.Members)</div>
+
+
+
+<div>
+    <form method="get" action="@Url.Action("SaveCheckout", new { groupId = ViewBag.GroupId})">
+        <button type="submit">ADD CHECKOUT</button>
+    </form>
+
+</div>
+
 
 <ul>
     @foreach (var checkout in Model.Checkouts)

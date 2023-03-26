@@ -7,6 +7,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div>
+    <form method="get" action="@Url.Action("Create2")">
+        <button type="submit">CREATE GROUP</button>
+    </form>
+
+</div>
+
 <h1>Group where you belong to: </h1>
 
 <div class="table-responsive">
@@ -21,7 +28,7 @@
             @foreach (var group in Model.GroupBy(g => g.GroupName))
             {
                 <tr>
-                    <td><strong>@group.Key</strong></td>
+                    <td><strong><a href="@Url.Action("Summary", "Checkout", new { groupId = group.First().Id, currencyBase = "USD" })">@group.Key</a></strong></td>
                     <td>
                         <ul>
                             @foreach (var member in group)
