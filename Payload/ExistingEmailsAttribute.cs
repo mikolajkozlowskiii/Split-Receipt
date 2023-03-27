@@ -1,45 +1,44 @@
-﻿using Split_Receipt.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using Split_Receipt.Areas.Identity.Data;
+using Split_Receipt.Data;
 using System.ComponentModel.DataAnnotations;
 
 namespace Split_Receipt.Payload
 {
     public class ExistingEmailsAttribute : ValidationAttribute
     {
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        private readonly int MIN_EXISTING_EMAILS = 2;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public ExistingEmailsAttribute(UserManager<ApplicationUser> userManager)
         {
-            var emailList = (List<string>)value;
+            _userManager = userManager;
+        }
+
+       /* protected override async Task<ValidationResult> IsValid(object value, ValidationContext validationContext)
+        {
             var dbContext = (AuthDbContext)validationContext.GetService(typeof(AuthDbContext));
+            var emails = (List<string>)value;
             int count = 0;
+            HashSet<string> existingEmails = new HashSet<string>();
 
-
-            foreach (var email in emailList)
+            if (emails != null && emails.Any())
             {
-               
-                if (email.Contains(","))
+                foreach (var email in emails)
                 {
-                    List<String> emails = email.Split(",").Select(e => e.Trim()).ToList();
-                    foreach(var oneEmail in emails)
+                    var user = await _userManager.FindByEmailAsync(email);
+                    if (user != null)
                     {
-                        var userInDB = dbContext.Users.FirstOrDefault(u => u.Email == email);
-                        if (userInDB != null)
-                        {
-                            count++;
-                        }
-                       
+                        existingEmails.Add(email);
                     }
                 }
-                var user = dbContext.Users.FirstOrDefault(u => u.Email == email);
-                if (user != null)
-                {
-                    count++;
-                }
             }
-            if(count > 1)
+
+            if (existingEmails.Count >= MIN_EXISTING_EMAILS)
             {
                 return ValidationResult.Success;
             }
-           
-            return new ValidationResult(ErrorMessage);
-        }
+            throw new ValidationException("Number of existing emails: " + existingEmails.Count + " don't allow you to create a group.");
+        }*/
     }
 }

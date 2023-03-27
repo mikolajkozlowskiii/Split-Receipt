@@ -1,5 +1,6 @@
-﻿using Microsoft.Build.Framework;
-using Split_Receipt.Models;
+﻿
+
+using System.ComponentModel.DataAnnotations;
 
 namespace Split_Receipt.Payload
 {
@@ -13,9 +14,12 @@ namespace Split_Receipt.Payload
         }
 
         [Required]
+        [MinLength(4)]
+        [MaxLength(30)]
         public string GroupName { get; set; }
-        // [ExistingEmails(ErrorMessage = "All emails must be existing users in the system")]
+
         [Required]
+        //[ExistingEmails]
         public List<String> Emails { get; set; }
 
     }

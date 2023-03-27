@@ -145,7 +145,7 @@ namespace Split_Receipt.Services
         {
             List<string> members = await _groupService.GetAllMembersEmails(groupId);
             List<CheckoutResponse> allCheckouts = await getAllByGroupID(groupId);
-            var groupName = _groupService.Get(groupId).Name;
+            var groupName = _groupService.FindById(groupId).Name;
             int numOfMemebers = members.Count();
             decimal total = await ComputeTotalBalance(userEmail, currencyBase, numOfMemebers, allCheckouts);
 

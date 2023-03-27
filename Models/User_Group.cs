@@ -9,19 +9,16 @@ namespace Split_Receipt.Models
         {
         }
 
-        public User_Group(int groupId, string userId) // zmiana parametru z UserEmail na UserId
+        public User_Group(int groupId, string userId) 
         {
             GroupId = groupId;
-            UserId = userId; // zmiana pola z UserEmail na UserId
+            UserId = userId; 
         }
     
-
         public int Id { get; set; }
-
         public string UserId { get; set; }
         public int GroupId { get; set; }
 
-        //nawigacja
         public virtual ApplicationUser User { get; set; }
         public virtual Group Group { get; set; }
 
