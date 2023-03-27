@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Split_Receipt.Areas.Identity.Data;
 using Split_Receipt.Data;
 using Split_Receipt.Models;
@@ -53,6 +54,8 @@ namespace Split_Receipt.Services
             response.GroupId = checkout.GroupId;
             response.UserId = checkout.UserId;
             response.CheckoutId = checkout.Id;
+            response.CreatedAt = checkout.CreatedAt;
+
             return response;
         }
 
@@ -76,6 +79,7 @@ namespace Split_Receipt.Services
                 response.Description = checkout.Description;
                 response.UserEmail = user.Email;
                 response.CheckoutId = checkout.Id;
+                response.CreatedAt = checkout.CreatedAt;
 
                 responses.Add(response);
             }
@@ -105,14 +109,15 @@ namespace Split_Receipt.Services
         {
             // check if group exists chociaz w sumie moze to nizej wystarczy
             // check if user is in group??
-           Checkout checkout = new Checkout();
+            Checkout checkout = new Checkout();
+           
            checkout.Currency = requestCheckout.Currency.ToUpper();
            checkout.Price = requestCheckout.Price;
            checkout.Description = requestCheckout.Description;
            checkout.IsSplitted = requestCheckout.IsSplitted;
            checkout.UserId = userId;
            checkout.GroupId = groupId;
-
+            checkout.CreatedAt = DateTime.Now;
             _appContext.Checkouts.Add(checkout);
 
             return _appContext.SaveChanges();

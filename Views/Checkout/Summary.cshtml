@@ -17,7 +17,10 @@
     </form>
 
 </div>
-
+<div>
+    <label>SORT: </label>
+    @Html.DropDownList("sortOption", new SelectList(new List<string> { "Date ASC", "Date DESC", "Price ASC", "Price DESC" }), new { onchange = "updateSort()" })
+</div>
 
 <ul>
     @foreach (var checkout in Model.Checkouts)
@@ -25,7 +28,7 @@
         if (checkout.UserEmail == Model.Email)
         {
             <li>
-                @checkout.UserEmail: @checkout.Description - @checkout.Price @checkout.Currency, is splitted: @checkout.IsSplitted, id: @checkout.CheckoutId
+                @checkout.UserEmail: @checkout.Description - @checkout.Price @checkout.Currency, is splitted: @checkout.IsSplitted, date @checkout.CreatedAt
                 <div>
                     <form method="get" action="@Url.Action("Delete", new { checkoutId = checkout.CheckoutId })">
                         <button type="submit">DELETE</button>
@@ -48,6 +51,13 @@
         var selectedValue = document.getElementById("currency").value;
         var url = "@Url.Action("Summary", new { groupId = (int)ViewBag.GroupId })";
         url += "&currencyBase=" + encodeURIComponent(selectedValue);
+        window.location.href = url;
+    }
+
+    function updateSort() {
+        var selectedValue = document.getElementById("sortOption").value;
+        var url = "@Url.Action("Summary", new { groupId = (int)ViewBag.GroupId, currencyBase = "PLN" })";
+        url += "&sortOption=" + encodeURIComponent(selectedValue);
         window.location.href = url;
     }
 </script>
