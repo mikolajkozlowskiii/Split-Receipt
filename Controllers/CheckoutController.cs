@@ -21,11 +21,13 @@ namespace Split_Receipt.Controllers
             _userManager = userManager;
             _groupService = group;
         }
+
         [Authorize]
         public IActionResult Index()
         {
             return View();
         }
+
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> getAllCheckouts()
@@ -34,17 +36,14 @@ namespace Split_Receipt.Controllers
             return View(allCheckouts);
         }
 
-        //[HttpGet("checkouts/byGroup/{groupId}")]
         [Authorize]
         [HttpGet]
         [Route("Checkout/ByGroup/{groupId}")]
-        public async Task<IActionResult> GetAllCheckoutsByGroupId(int groupId)
+        public async Task<IActionResult> GetAllCheckoutsByGroupId(int groupId, [FromQuery] string sortBy)
         {
-            var checkouts = await _checkoutService.getAllByGroupID(groupId);
+            var checkouts = await _checkoutService.getAllByGroupID(groupId, sortBy);
             return View(checkouts);
         }
-
-
 
         [Authorize]
         [HttpGet]
@@ -75,9 +74,6 @@ namespace Split_Receipt.Controllers
             return View(body);
         }
 
-
-
-
         [Authorize]
         [HttpPost]
         [Route("Checkout/Update/{checkoutId}")]
@@ -92,12 +88,11 @@ namespace Split_Receipt.Controllers
             int succesful = _checkoutService.update(body, checkoutId);
             if (succesful > 0)
             {
-               var checkout = await _checkoutService.get(checkoutId);
+               var checkout = await _checkoutService.FindById(checkoutId);
                return RedirectToAction("Summary", new { groupId = checkout.GroupId, currencyBase = checkout.Currency });
             }
             return View(body);
         }
-
 
         [Authorize]
         [HttpGet]
@@ -107,28 +102,23 @@ namespace Split_Receipt.Controllers
             // check if group contains user by UserGroupService if not throw an error
             var user = await _userManager.GetUserAsync(User);
             bool isUserInCheckout = _checkoutService.CheckIsUserInCheckout(user.Id, checkoutId);
-            var checkout = await _checkoutService.get(checkoutId);
+            var checkout = await _checkoutService.FindById(checkoutId);
             
             if (!isUserInCheckout)
             {
                 return Forbid();
             }
-            _checkoutService.delete(checkoutId);
+
+            _checkoutService.Delete(checkoutId);
             return RedirectToAction("Summary", new { groupId = checkout.GroupId, currencyBase = "PLN" });
         }
-
-
-
-
-
-
 
         [Authorize]
         [HttpGet]
         [Route("Checkout/Update/{checkoutId}")]
         public async Task<IActionResult> Update(int checkoutId)
         {
-            var checkout = await _checkoutService.get(checkoutId);
+            var checkout = await _checkoutService.FindById(checkoutId);
             ViewBag.CheckoutId = checkoutId;
             ViewBag.GroupId = checkout.GroupId;
             
@@ -143,7 +133,7 @@ namespace Split_Receipt.Controllers
         [Authorize]
         [HttpGet]
         [Route("Checkout/Summary")]
-        public async Task<IActionResult> Summary([FromQuery] int groupId, [FromQuery] string currencyBase)
+        public async Task<IActionResult> Summary([FromQuery] int groupId, [FromQuery] string currencyBase, [FromQuery] string sortBy)
         {
             //sprawdzenie czy istnieje w ogole takie groupId i currencyBase
             var user = await _userManager.GetUserAsync(User);
@@ -152,9 +142,9 @@ namespace Split_Receipt.Controllers
             {
                 return Forbid();
             }
-            CheckoutSummary summary = await _checkoutService.getCheckoutSummary(user.Email, currencyBase.ToUpper(), groupId);
+            CheckoutSummary summary = await _checkoutService.getCheckoutSummary(user.Email, currencyBase.ToUpper(), groupId, sortBy);
 
-            ViewBag.GroupId = groupId; // Dodajemy groupId do ViewBag
+            ViewBag.GroupId = groupId;
             return View(summary);
         }
     }

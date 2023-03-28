@@ -5,6 +5,7 @@ using Split_Receipt.Data;
 using Split_Receipt.Models;
 using Split_Receipt.Payload;
 using Split_Receipt.Services.Interfaces;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Split_Receipt.Services
@@ -25,7 +26,7 @@ namespace Split_Receipt.Services
             _currencyService = currencyService;
         }
 
-        public int delete(int id)
+        public int Delete(int id)
         {
             var checkout = _appContext.Checkouts.Find(id);
             _appContext.Checkouts.Remove(checkout);
@@ -33,7 +34,7 @@ namespace Split_Receipt.Services
             return id;
         }
 
-        public async Task<CheckoutResponse> get(int id)
+        public async Task<CheckoutResponse> FindById(int id)
         {
             var checkout = _appContext.Checkouts.FirstOrDefault(x => x.Id == id);
             var user = await _userManager.FindByIdAsync(checkout.UserId);
@@ -87,13 +88,51 @@ namespace Split_Receipt.Services
             return responses;
         }
 
-        public async Task<List<CheckoutResponse>> getAllByGroupID(int groupId)
+        public async Task<List<CheckoutResponse>> getAllByGroupID(int groupId, string sortBy)
         {
             var checkouts = _appContext.Checkouts
                 .Where(x => x.GroupId == groupId)
                 .ToList();
-            return await map(checkouts);
+            List<CheckoutResponse> responseList = await map(checkouts);
 
+            var baseCurrency = "PLN";
+            Dictionary<CheckoutResponse, decimal> checkoutDict = new Dictionary<CheckoutResponse, decimal>();
+            switch (sortBy)
+            {
+                case "Price ASC":
+                    await getCheckoutEquivalentPriceDict(responseList, baseCurrency, checkoutDict);
+                    var sortedDict = from entry in checkoutDict orderby entry.Value ascending select entry;
+                    return sortedDict.Select(entry => entry.Key).ToList();
+
+                case "Price DESC":
+                    await getCheckoutEquivalentPriceDict(responseList, baseCurrency, checkoutDict);
+                    var sortedDict2 = from entry in checkoutDict orderby entry.Value descending select entry;
+                    return sortedDict2.Select(entry => entry.Key).ToList();
+
+                case "Date ASC":
+                    responseList.Sort((x, y) => x.CreatedAt.CompareTo(y.CreatedAt));
+                    break;
+
+                case "Date DESC":
+                    responseList.Sort((x, y) => y.CreatedAt.CompareTo(x.CreatedAt));
+                    break;
+
+                default:
+                    responseList.Sort((x, y) => x.CreatedAt.CompareTo(y.CreatedAt));
+                    break;
+            }
+
+            return responseList;
+
+        }
+
+        private async Task getCheckoutEquivalentPriceDict(List<CheckoutResponse> responseList, string baseCurrency, Dictionary<CheckoutResponse, decimal> checkoutDict)
+        {
+            foreach (var checkoutResponse in responseList)
+            {
+                var priceInSameCurrency = await (_currencyService.GetRate(baseCurrency, checkoutResponse.Currency)) / (checkoutResponse.Price);
+                checkoutDict.Add(checkoutResponse, priceInSameCurrency);
+            }
         }
 
         public async Task<List<CheckoutResponse>> getAllByUserID(string userId)
@@ -146,10 +185,10 @@ namespace Split_Receipt.Services
             return isUserInCheckout;
         }
 
-        public async Task<CheckoutSummary> getCheckoutSummary(string userEmail, string currencyBase, int groupId)
+        public async Task<CheckoutSummary> getCheckoutSummary(string userEmail, string currencyBase, int groupId, string sortBy)
         {
             List<string> members = await _groupService.GetAllMembersEmails(groupId);
-            List<CheckoutResponse> allCheckouts = await getAllByGroupID(groupId);
+            List<CheckoutResponse> allCheckouts = await getAllByGroupID(groupId, sortBy);
             var groupName = _groupService.FindById(groupId).Name;
             int numOfMemebers = members.Count();
             decimal total = await ComputeTotalBalance(userEmail, currencyBase, numOfMemebers, allCheckouts);

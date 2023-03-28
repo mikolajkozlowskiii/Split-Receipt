@@ -2,12 +2,6 @@
 using Split_Receipt.Payload;
 using Split_Receipt.Services.Interfaces;
 using System.Net;
-using System.Net.Http;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace Split_Receipt.Services
 {
@@ -43,7 +37,7 @@ namespace Split_Receipt.Services
         {
             if (quoteCurrency.Equals(currencyBase))
             {
-                throw new ArgumentException("Currency Base and Quote Currency cannot be the same.");
+                return 1;
             }
             var currencyData = await GetCurrencyData(currencyBase);
             decimal value;

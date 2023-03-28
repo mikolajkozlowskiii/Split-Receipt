@@ -19,7 +19,7 @@
 </div>
 <div>
     <label>SORT: </label>
-    @Html.DropDownList("sortOption", new SelectList(new List<string> { "Date ASC", "Date DESC", "Price ASC", "Price DESC" }), new { onchange = "updateSort()" })
+    @Html.DropDownList("sortBy", new SelectList(new List<string> { "Date ASC", "Date DESC", "Price ASC", "Price DESC" }), new { onchange = "updateSort()" })
 </div>
 
 <ul>
@@ -49,15 +49,19 @@
 <script>
     function updateCurrency() {
         var selectedValue = document.getElementById("currency").value;
+        var selectedValue2 = document.getElementById("sortBy").value;
         var url = "@Url.Action("Summary", new { groupId = (int)ViewBag.GroupId })";
         url += "&currencyBase=" + encodeURIComponent(selectedValue);
+        url += "&sortBy=" + encodeURIComponent(selectedValue2);
         window.location.href = url;
     }
 
     function updateSort() {
-        var selectedValue = document.getElementById("sortOption").value;
-        var url = "@Url.Action("Summary", new { groupId = (int)ViewBag.GroupId, currencyBase = "PLN" })";
-        url += "&sortOption=" + encodeURIComponent(selectedValue);
+        var selectedValue = document.getElementById("sortBy").value;
+        var selectedValue2 = document.getElementById("currency").value;
+        var url = "@Url.Action("Summary", new { groupId = (int)ViewBag.GroupId})";
+        url += "&currencyBase=" + encodeURIComponent(selectedValue2);
+        url += "&sortBy=" + encodeURIComponent(selectedValue);
         window.location.href = url;
     }
 </script>
