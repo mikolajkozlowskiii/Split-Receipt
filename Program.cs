@@ -27,6 +27,7 @@ builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<ICheckoutService,  CheckoutService>();
 builder.Services.AddScoped<GroupMapper, GroupMapper>();
+builder.Services.AddScoped<CheckoutMapper, CheckoutMapper>();
 builder.Services.AddHttpClient("currency-api", c => 
 {
     c.BaseAddress = new Uri("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/");

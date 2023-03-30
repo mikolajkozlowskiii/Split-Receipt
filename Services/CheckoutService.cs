@@ -5,6 +5,7 @@ using Split_Receipt.Data;
 using Split_Receipt.Models;
 using Split_Receipt.Payload;
 using Split_Receipt.Services.Interfaces;
+using Split_Receipt.Services.Mappers;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -16,14 +17,16 @@ namespace Split_Receipt.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IGroupService _groupService;
         private readonly ICurrencyService _currencyService;
+        private readonly CheckoutMapper _checkoutMapper;
 
         public CheckoutService(AuthDbContext appContext, UserManager<ApplicationUser> userManager,
-            IGroupService groupService, ICurrencyService currencyService)
+            IGroupService groupService, ICurrencyService currencyService, CheckoutMapper checkoutMapper)
         {
             _appContext = appContext;
             _userManager = userManager;
             _groupService = groupService;
             _currencyService = currencyService;
+            _checkoutMapper = checkoutMapper;
         }
 
         public int Delete(int id)
@@ -38,54 +41,17 @@ namespace Split_Receipt.Services
         {
             var checkout = _appContext.Checkouts.FirstOrDefault(x => x.Id == id);
             var user = await _userManager.FindByIdAsync(checkout.UserId);
-
-            CheckoutResponse response = map(checkout, user.Email);
-
-            return response;
-        }
-
-        private static CheckoutResponse map(Checkout? checkout, String email)
-        {
-            CheckoutResponse response = new CheckoutResponse();
-            response.IsSplitted = checkout.IsSplitted;
-            response.Currency = checkout.Currency;
-            response.Price = checkout.Price;
-            response.Description = checkout.Description;
-            response.UserEmail = email;
-            response.GroupId = checkout.GroupId;
-            response.UserId = checkout.UserId;
-            response.CheckoutId = checkout.Id;
-            response.CreatedAt = checkout.CreatedAt;
+    
+            CheckoutResponse response =  _checkoutMapper.map(checkout, user.Email);
 
             return response;
         }
+
 
         public async Task<List<CheckoutResponse>> FindAll()
         {
             var checkouts = _appContext.Checkouts.ToList();
-            return await map(checkouts);
-        }
-
-        private async Task<List<CheckoutResponse>> map(List<Checkout> checkouts)
-        {
-            List<CheckoutResponse> responses = new List<CheckoutResponse>();
-            foreach (var checkout in checkouts)
-            {
-                var user = await _userManager.FindByIdAsync(checkout.UserId);
-
-                CheckoutResponse response = new CheckoutResponse();
-                response.IsSplitted = checkout.IsSplitted;
-                response.Currency = checkout.Currency;
-                response.Price = checkout.Price;
-                response.Description = checkout.Description;
-                response.UserEmail = user.Email;
-                response.CheckoutId = checkout.Id;
-                response.CreatedAt = checkout.CreatedAt;
-
-                responses.Add(response);
-            }
-
-            return responses;
+            return await _checkoutMapper.map(checkouts);
         }
 
         public async Task<List<CheckoutResponse>> FindlAllByGroupId(int groupId, string sortBy)
@@ -93,7 +59,7 @@ namespace Split_Receipt.Services
             var checkouts = _appContext.Checkouts
                 .Where(x => x.GroupId == groupId)
                 .ToList();
-            List<CheckoutResponse> responseList = await map(checkouts);
+            List<CheckoutResponse> responseList = await _checkoutMapper.map(checkouts);
             return await Sort(sortBy, responseList);
         }
 
@@ -134,7 +100,11 @@ namespace Split_Receipt.Services
             Dictionary<CheckoutResponse, decimal> checkoutDict = new Dictionary<CheckoutResponse, decimal>();
             foreach (var checkoutResponse in responseList)
             {
-                var priceInSameCurrency = await (_currencyService.GetRate(baseCurrency, checkoutResponse.Currency)) / (checkoutResponse.Price);
+                decimal priceInSameCurrency = 0;
+                if (checkoutResponse.Price != 0)
+                {
+                    priceInSameCurrency = await (_currencyService.GetRate(baseCurrency, checkoutResponse.Currency)) / (checkoutResponse.Price);
+                } 
                 checkoutDict.Add(checkoutResponse, priceInSameCurrency);
             }
             return checkoutDict;
@@ -145,7 +115,7 @@ namespace Split_Receipt.Services
             var checkouts = _appContext.Checkouts
                 .Where(x => x.UserId == userId)
                 .ToList();
-            return await map(checkouts);
+            return await _checkoutMapper.map(checkouts);
         }
 
 
