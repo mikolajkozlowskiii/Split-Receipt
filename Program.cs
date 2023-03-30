@@ -4,6 +4,7 @@ using Split_Receipt.Areas.Identity.Data;
 using Split_Receipt.Data;
 using Split_Receipt.Services;
 using Split_Receipt.Services.Interfaces;
+using Split_Receipt.Services.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AuthDbContextConnection") ?? throw new InvalidOperationException("Connection string 'AuthDbContextConnection' not found.");
@@ -25,6 +26,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<ICheckoutService,  CheckoutService>();
+builder.Services.AddScoped<GroupMapper, GroupMapper>();
 builder.Services.AddHttpClient("currency-api", c => 
 {
     c.BaseAddress = new Uri("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/");

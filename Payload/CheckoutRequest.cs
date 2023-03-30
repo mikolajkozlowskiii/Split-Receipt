@@ -15,7 +15,6 @@ namespace Split_Receipt.Payload
             Description = description;
         }
         [Required]
-        [MaxLength(9)]
         public decimal Price { get; set; }
         [Required]
         public string Currency { get; set; }

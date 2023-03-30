@@ -66,7 +66,7 @@ namespace Split_Receipt.Controllers
         public async Task<IActionResult> YourGroups()
         {
             var user = await _userManager.GetUserAsync(User);
-            var user_groups = await _groupService.FindAllUserGroupsByUserId(user.Id);
+            var user_groups = await _groupService.FindAllUserGroupsResponseByUserId(user.Id);
             return View(user_groups);
         }
 

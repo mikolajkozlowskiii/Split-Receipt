@@ -59,6 +59,11 @@ namespace Split_Receipt.Controllers
         [Route("Checkout/SaveCheckout/{groupId}")]
         public async Task<IActionResult> SaveCheckout(int groupId, CheckoutRequest body)
         {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.GroupId = groupId;
+                return View(body);
+            }
             // check if group contains user by UserGroupService if not throw an error
             var user = await _userManager.GetUserAsync(User);
             bool isUserInGroup = await _groupService.CheckIsUserInGroup(user.Id,groupId);

@@ -5,6 +5,7 @@ using Split_Receipt.Data;
 using Split_Receipt.Models;
 using Split_Receipt.Payload;
 using Split_Receipt.Services.Interfaces;
+using Split_Receipt.Services.Mappers;
 using System.ComponentModel.DataAnnotations;
 
 namespace Split_Receipt.Services
@@ -13,11 +14,13 @@ namespace Split_Receipt.Services
     {
         private readonly AuthDbContext _appContext;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly GroupMapper _groupMapper;
 
-        public GroupService(AuthDbContext appContext, UserManager<ApplicationUser> userManager)
+        public GroupService(AuthDbContext appContext, UserManager<ApplicationUser> userManager, GroupMapper groupMapper)
         {
             _appContext = appContext;
             _userManager = userManager;
+            _groupMapper = groupMapper;
         }
 
         public Group FindById(int id)
@@ -70,17 +73,17 @@ namespace Split_Receipt.Services
 
         public async Task<List<UserGroupResponse>> FindAllUserGroupsResponseByUserId(string userId)
         {
-            List<UserGroupResponse> userGroupResponses = await map(await FindAllUserGroupsByUserId(userId));
+            List<UserGroupResponse> userGroupResponses = await _groupMapper.map(await FindAllUserGroupsByUserId(userId));
             return userGroupResponses;
         }
 
         public async Task<List<UserGroupResponse>> FindAllUserGroupsResponse()
         {
             List<User_Group> userGroups = await FindAllUserGroups();
-            List<UserGroupResponse> userGroupResponses = await map(userGroups);
+            List<UserGroupResponse> userGroupResponses = await _groupMapper.map(userGroups);
             return userGroupResponses;
         }
-
+/*
         private async Task<List<UserGroupResponse>> map(List<User_Group> userGroups)
         {
             List<UserGroupResponse> userGroupResponses = new List<UserGroupResponse>();
@@ -98,7 +101,7 @@ namespace Split_Receipt.Services
             }
             return userGroupResponses;
         }
-
+*/
         public int Save(List<User_Group> userGroups)
         {
             foreach(var userGroup in userGroups)
