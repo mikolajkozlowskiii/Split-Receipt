@@ -1,4 +1,5 @@
-﻿using Split_Receipt.Areas.Identity.Data;
+﻿using Microsoft.Build.Framework;
+using Split_Receipt.Areas.Identity.Data;
 
 namespace Split_Receipt.Models
 {
@@ -22,13 +23,18 @@ namespace Split_Receipt.Models
         }
 
         public int Id { get; set; }
+        [Required]
         public decimal Price { get; set; }
+        [Required]
         public string Currency { get; set; }
+        [Required]
         public bool IsSplitted { get; set; }
+        [Required]
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; }
-
+        [Required]
         public string UserId { get; set; }
+        [Required]
         public int GroupId { get; set; }
 
         public virtual ApplicationUser User { get; set; }

@@ -6,13 +6,13 @@ namespace Split_Receipt.Services.Interfaces
     public interface ICheckoutService
     {
         Task<CheckoutResponse> FindById(int id);
-        Task<List<CheckoutResponse>> getAll();
-        Task<List<CheckoutResponse>> getAllByGroupID(int groupId, string sortBy);
-        Task<List<CheckoutResponse>> getAllByUserID(string userId);
-        Task<CheckoutSummary> getCheckoutSummary(string userEmail, string currencyBase, int groupId, string sortBy);
+        Task<List<CheckoutResponse>> FindAll();
+        Task<List<CheckoutResponse>> FindlAllByGroupId(int groupId, string sortBy);
+        Task<List<CheckoutResponse>> FindAllByUserID(string userId);
+        Task<CheckoutSummary> CreateCheckoutSummary(string userEmail, string currencyBase, int groupId, string sortBy);
 
-        int save(CheckoutRequest checkout, string userId, int groupId);
-        int update(CheckoutRequest checkoutRequest, int checkoutId);
+        int Save(CheckoutRequest checkout, string userId, int groupId);
+        int Update(CheckoutRequest checkoutRequest, int checkoutId);
         int Delete(int id);
         bool CheckIsUserInCheckout(string UserId, int checkoutId);
         

@@ -1,4 +1,4 @@
-﻿using Microsoft.Build.Framework;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Split_Receipt.Models
 {
@@ -16,6 +16,8 @@ namespace Split_Receipt.Models
 
         public int Id { get; set; }
         [Required]
+        [MinLength(2)]
+        [MaxLength(20)]
         public string Name { get; set; }
 
         public virtual ICollection<User_Group> User_Groups { get; set; }

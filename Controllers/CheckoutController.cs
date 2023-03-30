@@ -32,7 +32,7 @@ namespace Split_Receipt.Controllers
         [Authorize]
         public async Task<IActionResult> getAllCheckouts()
         {
-            var allCheckouts = await _checkoutService.getAll();
+            var allCheckouts = await _checkoutService.FindAll();
             return View(allCheckouts);
         }
 
@@ -41,7 +41,7 @@ namespace Split_Receipt.Controllers
         [Route("Checkout/ByGroup/{groupId}")]
         public async Task<IActionResult> GetAllCheckoutsByGroupId(int groupId, [FromQuery] string sortBy)
         {
-            var checkouts = await _checkoutService.getAllByGroupID(groupId, sortBy);
+            var checkouts = await _checkoutService.FindlAllByGroupId(groupId, sortBy);
             return View(checkouts);
         }
 
@@ -61,12 +61,12 @@ namespace Split_Receipt.Controllers
         {
             // check if group contains user by UserGroupService if not throw an error
             var user = await _userManager.GetUserAsync(User);
-            bool isUserInGroup = _groupService.CheckIsUserInGroup(user.Id,groupId);
+            bool isUserInGroup = await _groupService.CheckIsUserInGroup(user.Id,groupId);
             if (!isUserInGroup)
             {
                 return Forbid();
             }
-            int succesful = _checkoutService.save(body, user.Id, groupId);
+            int succesful = _checkoutService.Save(body, user.Id, groupId);
             if (succesful > 0)
             {
                 return RedirectToAction("Summary", new { groupId = groupId, currencyBase = body.Currency });
@@ -85,7 +85,7 @@ namespace Split_Receipt.Controllers
             {
                 return Forbid();
             }
-            int succesful = _checkoutService.update(body, checkoutId);
+            int succesful = _checkoutService.Update(body, checkoutId);
             if (succesful > 0)
             {
                var checkout = await _checkoutService.FindById(checkoutId);
@@ -137,12 +137,12 @@ namespace Split_Receipt.Controllers
         {
             //sprawdzenie czy istnieje w ogole takie groupId i currencyBase
             var user = await _userManager.GetUserAsync(User);
-            bool isUserInGroup = _groupService.CheckIsUserInGroup(user.Id, groupId);
+            bool isUserInGroup = await _groupService.CheckIsUserInGroup(user.Id, groupId);
             if (!isUserInGroup)
             {
                 return Forbid();
             }
-            CheckoutSummary summary = await _checkoutService.getCheckoutSummary(user.Email, currencyBase.ToUpper(), groupId, sortBy);
+            CheckoutSummary summary = await _checkoutService.CreateCheckoutSummary(user.Email, currencyBase.ToUpper(), groupId, sortBy);
 
             ViewBag.GroupId = groupId;
             return View(summary);

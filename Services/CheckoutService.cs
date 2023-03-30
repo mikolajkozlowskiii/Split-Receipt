@@ -60,7 +60,7 @@ namespace Split_Receipt.Services
             return response;
         }
 
-        public async Task<List<CheckoutResponse>> getAll()
+        public async Task<List<CheckoutResponse>> FindAll()
         {
             var checkouts = _appContext.Checkouts.ToList();
             return await map(checkouts);
@@ -88,24 +88,28 @@ namespace Split_Receipt.Services
             return responses;
         }
 
-        public async Task<List<CheckoutResponse>> getAllByGroupID(int groupId, string sortBy)
+        public async Task<List<CheckoutResponse>> FindlAllByGroupId(int groupId, string sortBy)
         {
             var checkouts = _appContext.Checkouts
                 .Where(x => x.GroupId == groupId)
                 .ToList();
             List<CheckoutResponse> responseList = await map(checkouts);
+            return await Sort(sortBy, responseList);
+        }
 
+        private async Task<List<CheckoutResponse>> Sort(string sortBy, List<CheckoutResponse> responseList)
+        {
             var baseCurrency = "PLN";
-            Dictionary<CheckoutResponse, decimal> checkoutDict = new Dictionary<CheckoutResponse, decimal>();
+            Dictionary<CheckoutResponse, decimal> checkoutDict;
             switch (sortBy)
             {
                 case "Price ASC":
-                    await getCheckoutEquivalentPriceDict(responseList, baseCurrency, checkoutDict);
+                    checkoutDict = await GetCheckoutEquivalentPriceDict(responseList, baseCurrency);
                     var sortedDict = from entry in checkoutDict orderby entry.Value ascending select entry;
                     return sortedDict.Select(entry => entry.Key).ToList();
 
                 case "Price DESC":
-                    await getCheckoutEquivalentPriceDict(responseList, baseCurrency, checkoutDict);
+                    checkoutDict = await GetCheckoutEquivalentPriceDict(responseList, baseCurrency);
                     var sortedDict2 = from entry in checkoutDict orderby entry.Value descending select entry;
                     return sortedDict2.Select(entry => entry.Key).ToList();
 
@@ -123,19 +127,20 @@ namespace Split_Receipt.Services
             }
 
             return responseList;
-
         }
 
-        private async Task getCheckoutEquivalentPriceDict(List<CheckoutResponse> responseList, string baseCurrency, Dictionary<CheckoutResponse, decimal> checkoutDict)
+        private async Task<Dictionary<CheckoutResponse, decimal>> GetCheckoutEquivalentPriceDict(List<CheckoutResponse> responseList, string baseCurrency)
         {
+            Dictionary<CheckoutResponse, decimal> checkoutDict = new Dictionary<CheckoutResponse, decimal>();
             foreach (var checkoutResponse in responseList)
             {
                 var priceInSameCurrency = await (_currencyService.GetRate(baseCurrency, checkoutResponse.Currency)) / (checkoutResponse.Price);
                 checkoutDict.Add(checkoutResponse, priceInSameCurrency);
             }
+            return checkoutDict;
         }
 
-        public async Task<List<CheckoutResponse>> getAllByUserID(string userId)
+        public async Task<List<CheckoutResponse>> FindAllByUserID(string userId)
         {
             var checkouts = _appContext.Checkouts
                 .Where(x => x.UserId == userId)
@@ -144,25 +149,24 @@ namespace Split_Receipt.Services
         }
 
 
-        public int save(CheckoutRequest requestCheckout, string userId, int groupId)
+        public int Save(CheckoutRequest requestCheckout, string userId, int groupId)
         {
-            // check if group exists chociaz w sumie moze to nizej wystarczy
-            // check if user is in group??
-            Checkout checkout = new Checkout();
-           
-           checkout.Currency = requestCheckout.Currency.ToUpper();
-           checkout.Price = requestCheckout.Price;
-           checkout.Description = requestCheckout.Description;
-           checkout.IsSplitted = requestCheckout.IsSplitted;
-           checkout.UserId = userId;
-           checkout.GroupId = groupId;
-            checkout.CreatedAt = DateTime.Now;
-            _appContext.Checkouts.Add(checkout);
+            Checkout checkout = new Checkout
+            {
+                Currency = requestCheckout.Currency.ToUpper(),
+                Price = requestCheckout.Price,
+                Description = requestCheckout.Description,
+                IsSplitted = requestCheckout.IsSplitted,
+                UserId = userId,
+                GroupId = groupId,
+                CreatedAt = DateTime.Now
+            };         
+           _appContext.Checkouts.Add(checkout);
 
             return _appContext.SaveChanges();
         }
 
-        public int update(CheckoutRequest checkoutRequest, int checkoutId)
+        public int Update(CheckoutRequest checkoutRequest, int checkoutId)
         {
             var checkout = _appContext.Checkouts.Find(checkoutId);
             if(checkout != null)
@@ -185,21 +189,24 @@ namespace Split_Receipt.Services
             return isUserInCheckout;
         }
 
-        public async Task<CheckoutSummary> getCheckoutSummary(string userEmail, string currencyBase, int groupId, string sortBy)
+        public async Task<CheckoutSummary> CreateCheckoutSummary(string userEmail, string currencyBase, int groupId, string sortBy)
         {
             List<string> members = await _groupService.GetAllMembersEmails(groupId);
-            List<CheckoutResponse> allCheckouts = await getAllByGroupID(groupId, sortBy);
+            List<CheckoutResponse> allCheckouts = await FindlAllByGroupId(groupId, sortBy);
             var groupName = _groupService.FindById(groupId).Name;
             int numOfMemebers = members.Count();
             decimal total = await ComputeTotalBalance(userEmail, currencyBase, numOfMemebers, allCheckouts);
 
-            CheckoutSummary checkoutSummary = new CheckoutSummary();
-            checkoutSummary.Email = userEmail;
-            checkoutSummary.GroupName = groupName;
-            checkoutSummary.Checkouts = allCheckouts;
-            checkoutSummary.Total = total;
-            checkoutSummary.Currency = currencyBase.ToUpper();
-            checkoutSummary.Members = members;
+            CheckoutSummary checkoutSummary = new CheckoutSummary
+            {
+                Email = userEmail,
+                GroupName = groupName,
+                Checkouts = allCheckouts,
+                Total = total,
+                Currency = currencyBase.ToUpper(),
+                Members = members,
+            };
+        
             return checkoutSummary;
         }
 

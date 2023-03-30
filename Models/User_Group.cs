@@ -1,5 +1,5 @@
 ﻿using Split_Receipt.Areas.Identity.Data;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace Split_Receipt.Models
 {
@@ -16,7 +16,9 @@ namespace Split_Receipt.Models
         }
     
         public int Id { get; set; }
+        [Required]
         public string UserId { get; set; }
+        [Required]
         public int GroupId { get; set; }
 
         public virtual ApplicationUser User { get; set; }

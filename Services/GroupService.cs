@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Split_Receipt.Areas.Identity.Data;
 using Split_Receipt.Data;
 using Split_Receipt.Models;
@@ -21,40 +22,61 @@ namespace Split_Receipt.Services
 
         public Group FindById(int id)
         {
-            return _appContext.Groups.FirstOrDefault(g => g.Id == id);
+            var group = _appContext.Groups.FirstOrDefault(g => g.Id == id);
+            if (group == null)
+            {
+                throw new InvalidOperationException($"Group with id {id} was not found.");
+            }
+            return group;
         }
 
         public List<Group> FindAll() 
-        { 
+        {
             return _appContext.Groups.ToList();
         }
 
         public int Save(Group group) 
         {
-            _appContext.Groups.Add(group);
+            var context = new ValidationContext(group, serviceProvider: null, items: null);
+            var validationResults = new List<ValidationResult>();
 
+            bool isValid = Validator.TryValidateObject(group, context, validationResults, true);
+
+            if (isValid)
+            {
+                _appContext.Groups.Add(group);
+            }
             return _appContext.SaveChanges();
         }
 
-        public async Task<List<UserGroupResponse>> FindAllUserGroupsByUserId(string userId)
+        public async Task<List<User_Group>> FindAllUserGroups()
+        {
+            return _appContext.User_Groups.ToList();
+        }
+
+        public async Task<List<User_Group>> FindAllUserGroupsByUserId(string userId)
         {
             var userGroupsId = _appContext.User_Groups
                                             .Where(x => x.UserId == userId)
                                             .Select(x => x.GroupId)
                                             .ToList();
 
-            List<User_Group> allUserGroups = _appContext.User_Groups
+            return _appContext.User_Groups
                 .Where(x => userGroupsId
                 .Contains(x.GroupId))
                 .ToList();
+        }
 
-            List<UserGroupResponse> userGroupResponses = await map(allUserGroups);
+
+        public async Task<List<UserGroupResponse>> FindAllUserGroupsResponseByUserId(string userId)
+        {
+            List<UserGroupResponse> userGroupResponses = await map(await FindAllUserGroupsByUserId(userId));
             return userGroupResponses;
         }
 
-        public async Task<List<UserGroupResponse>> FindAllUserGroups()
+        public async Task<List<UserGroupResponse>> FindAllUserGroupsResponse()
         {
-            List<User_Group> userGroups = _appContext.User_Groups.ToList();
+            List<User_Group> userGroups = await FindAllUserGroups();
             List<UserGroupResponse> userGroupResponses = await map(userGroups);
             return userGroupResponses;
         }
@@ -79,6 +101,17 @@ namespace Split_Receipt.Services
 
         public int Save(List<User_Group> userGroups)
         {
+            foreach(var userGroup in userGroups)
+            {
+                var context = new ValidationContext(userGroup, serviceProvider: null, items: null);
+                var validationResults = new List<ValidationResult>();
+
+                bool isValid = Validator.TryValidateObject(userGroup, context, validationResults, true);
+                if (!isValid)
+                {
+                    return -1;
+                }
+            }
             _appContext.User_Groups.AddRange(userGroups);
             return _appContext.SaveChanges();
         }
@@ -148,7 +181,7 @@ namespace Split_Receipt.Services
             return group;
         }
 
-        public bool CheckIsUserInGroup(string userId, int groupId)
+        public async Task<Boolean> CheckIsUserInGroup(string userId, int groupId)
         {
             return _appContext.User_Groups.Any(x => x.GroupId == groupId && x.UserId == userId);
         }
@@ -171,5 +204,6 @@ namespace Split_Receipt.Services
             }
             return emails;
         }
+    
     }
 }

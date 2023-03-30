@@ -11,13 +11,15 @@ namespace Split_Receipt.Services.Interfaces
         List<Group> FindAll();
         int Save(Group group);
 
-        Task<List<UserGroupResponse>> FindAllUserGroups();
-        Task<List<UserGroupResponse>> FindAllUserGroupsByUserId(string userId);
+        Task<List<UserGroupResponse>> FindAllUserGroupsResponse();
+        Task<List<User_Group>> FindAllUserGroups();
+        Task<List<UserGroupResponse>> FindAllUserGroupsResponseByUserId(string userId);
+        Task<List<User_Group>> FindAllUserGroupsByUserId(string userId);
         Task<List<String>> GetAllMembersIDs(int groupId);
         Task<List<String>> GetAllMembersEmails(int groupId);
         Task<Boolean> Save(UserGroupRequest request);
         int Save(List<User_Group> userGroups);
-        bool CheckIsUserInGroup(string userId,  int groupId);
+        Task<Boolean> CheckIsUserInGroup(string userId, int groupId);
 
     }
 }
