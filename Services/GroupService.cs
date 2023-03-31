@@ -23,6 +23,13 @@ namespace Split_Receipt.Services
             _groupMapper = groupMapper;
         }
 
+        /// <summary>
+        /// This method is used for find Group's object instance by group's id.
+        /// </summary>
+        /// <param name="id"></param> is an id of group.
+        /// <returns>Instance of Group's object.</returns>
+        /// <exception cref="InvalidOperationException">If there is no such a group's id in DB,
+        /// then it throws InvalidOperationException with a proper message.</exception>
         public Group FindById(int id)
         {
             var group = _appContext.Groups.FirstOrDefault(g => g.Id == id);
@@ -33,11 +40,20 @@ namespace Split_Receipt.Services
             return group;
         }
 
+        /// <summary>
+        /// This method is used for find all Group's object instances in DB.
+        /// </summary>
+        /// <returns>List of Group's object instances saved in DB.</returns>
         public List<Group> FindAll() 
         {
             return _appContext.Groups.ToList();
         }
 
+        /// <summary>
+        /// This method is used for save Group's object instance in DB.
+        /// </summary>
+        /// <param name="group"></param> is a Group's object to be saved in DB
+        /// <returns>Positive integer if save operation ended successfully, otherwise negative number.</returns>
         public int Save(Group group) 
         {
             var context = new ValidationContext(group, serviceProvider: null, items: null);
@@ -52,11 +68,20 @@ namespace Split_Receipt.Services
             return _appContext.SaveChanges();
         }
 
+        /// <summary>
+        /// This method is used for find all User_Group object instances in DB.
+        /// </summary>
+        /// <returns>List of User_Group's object instances saved in DB.</returns>
         public async Task<List<User_Group>> FindAllUserGroups()
         {
             return _appContext.User_Groups.ToList();
         }
 
+        /// <summary>
+        /// This method is used to find all User_Group's object instance saved in DB.
+        /// </summary>
+        /// <param name="userId"></param> is a user's id used to find User_Groups which contains this id.
+        /// <returns>>List of User_Group's object instances</returns>
         public async Task<List<User_Group>> FindAllUserGroupsByUserId(string userId)
         {
             var userGroupsId = _appContext.User_Groups
@@ -70,38 +95,34 @@ namespace Split_Receipt.Services
                 .ToList();
         }
 
-
+        /// <summary>
+        /// This method is used for find all User_Group's object instances saved in DB where belogns specific user.
+        /// </summary>
+        /// <param name="userId"></param> is a user's id, due that it is possible to recognize, where specific User, belongs
+        /// to which User_Group table.
+        /// <returns>List of User_Group's object instances mapped on UserGroupResponse's object instances.</returns>
         public async Task<List<UserGroupResponse>> FindAllUserGroupsResponseByUserId(string userId)
         {
             List<UserGroupResponse> userGroupResponses = await _groupMapper.map(await FindAllUserGroupsByUserId(userId));
             return userGroupResponses;
         }
 
+        /// <summary>
+        /// This method is used for find all User_Group's object instance saved in DB.
+        /// </summary>
+        /// <returns>List of User_Group's object instances mapped on UserGroupResponse's object instances.</returns>
         public async Task<List<UserGroupResponse>> FindAllUserGroupsResponse()
         {
             List<User_Group> userGroups = await FindAllUserGroups();
             List<UserGroupResponse> userGroupResponses = await _groupMapper.map(userGroups);
             return userGroupResponses;
         }
-/*
-        private async Task<List<UserGroupResponse>> map(List<User_Group> userGroups)
-        {
-            List<UserGroupResponse> userGroupResponses = new List<UserGroupResponse>();
-            foreach (User_Group userGroup in userGroups)
-            {
-                Group group = _appContext.Groups.Find(userGroup.GroupId);
-                string groupName = group.Name;
-                int groupId = group.Id;
-                var user = await _userManager.FindByIdAsync(userGroup.UserId);
-                if (user != null)
-                {
-                    string email = user.Email;
-                    userGroupResponses.Add(new UserGroupResponse(groupId, groupName, email));
-                }
-            }
-            return userGroupResponses;
-        }
-*/
+
+        /// <summary>
+        /// This method is used for save list of User_Group's object instances in DB.
+        /// </summary>
+        /// <param name="userGroups"></param> is a body of User_Group's object instance.
+        /// <returns>Positive integer if save operation ended successfully. Otherwise negative number.</returns>
         public int Save(List<User_Group> userGroups)
         {
             foreach(var userGroup in userGroups)
@@ -119,6 +140,12 @@ namespace Split_Receipt.Services
             return _appContext.SaveChanges();
         }
 
+        /// <summary>
+        /// This method is used for take UserGroupRequest's object instance body. 
+        /// Then it call Save method and save object in DB.
+        /// </summary>
+        /// <param name="request"></param> is a body of UserGroupRequest's object instance.
+        /// <returns>True if save operation ended successfully. Otherwise false.</returns>
         public async Task<Boolean> Save(UserGroupRequest request)
         {
             List<String> emails = await GetUniqueExistingUsers(request.Emails);
@@ -133,8 +160,11 @@ namespace Split_Receipt.Services
                  userGroups.Add(new User_Group(groupId, user.Id));
             }
 
-            Save(userGroups);
-            return true;
+            if (Save(userGroups) > 0)
+            {
+                return true;
+            }
+            return false;
         }
         private async Task<List<string>> GetUniqueExistingUsers(List<String> emails)
         {
@@ -184,11 +214,22 @@ namespace Split_Receipt.Services
             return group;
         }
 
+        /// <summary>
+        /// This method is used for check if specific user belongs to specific group.
+        /// </summary>
+        /// <param name="userId"></param> is an id of user.
+        /// <param name="groupId"></param> is an id of group.
+        /// <returns>True if user belongs to specific group. Otherwise false.</returns>
         public async Task<Boolean> CheckIsUserInGroup(string userId, int groupId)
         {
             return _appContext.User_Groups.Any(x => x.GroupId == groupId && x.UserId == userId);
         }
 
+        /// <summary>
+        /// This method finds all user's ids which belogns to specific group.
+        /// </summary>
+        /// <param name="groupId"></param> is an id of group.
+        /// <returns>List of users' ids which belongs to specific group.</returns>
         public async Task<List<String>> GetAllMembersIDs(int groupId)
         {
             return _appContext.User_Groups
@@ -196,6 +237,12 @@ namespace Split_Receipt.Services
                                            .Select(x => x.UserId)
                                            .ToList();
         }
+
+        /// <summary>
+        /// This method finds all user's email which belogns to specific group.
+        /// </summary>
+        /// <param name="groupId"></param> is an id of group.
+        /// <returns>List of users' emails which belongs to specific group.</returns>
         public async Task<List<String>> GetAllMembersEmails(int groupId)
         {
             var membersId = await GetAllMembersIDs(groupId);

@@ -5,6 +5,10 @@ using Split_Receipt.Payload;
 
 namespace Split_Receipt.Services.Mappers
 {
+    /// <summary>
+    /// Class <c>CheckoutMapper</c> contains method for mapping Checkout's
+    /// object instances.
+    /// </summary>
     public class CheckoutMapper
     {
         private readonly UserManager<ApplicationUser> _userManager;

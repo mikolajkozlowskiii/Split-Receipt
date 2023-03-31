@@ -3,6 +3,9 @@ using Split_Receipt.Areas.Identity.Data;
 
 namespace Split_Receipt.Models
 {
+    /// <summary>
+    /// Class <c>Checkout</c> is model for checkouts saved in DB.
+    /// </summary>
     public class Checkout
     {
         public Checkout()
@@ -21,7 +24,6 @@ namespace Split_Receipt.Models
             GroupId = groupId;
             CreatedAt = DateTime.Now;
         }
-
         public int Id { get; set; }
         [Required]
         public decimal Price { get; set; }

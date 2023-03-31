@@ -2,10 +2,13 @@
 
 namespace Split_Receipt.Services.Interfaces
 {
+    /// <summary>
+    /// Interface <t>ICurrencyService</t> that contains methods for operation on
+    /// <c>CurrencyResponse</c>.
+    /// </summary>
     public interface ICurrencyService
     {
-        void Get(string currencyBase);
-        Task<CurrencyResponse> GetCurrencyData(string currencyBase);
+        Task<CurrencyResponse> GetLatestCurrencyData(string currencyBase);
         Task<Decimal> GetRate(string currencyBase, string quoteCurrency);
     }
 }

@@ -1,5 +1,9 @@
 ﻿namespace Split_Receipt.Payload
 {
+    /// <summary>
+    ///  Class <c>CheckoutResponse</c> is a DTO's object
+    ///  beetween saved checkout in DB and respond returned to view.
+    /// </summary>
     public class CheckoutResponse
     {
         public CheckoutResponse()

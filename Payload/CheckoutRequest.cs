@@ -3,6 +3,10 @@ namespace Split_Receipt.Payload
 {
     public class CheckoutRequest
     {
+        /// <summary>
+        ///  Class <c>CheckoutRequest</c> is a DTO's object
+        ///  beetween view's request of creating checkout and saved checkout in DB.
+        /// </summary>
         public CheckoutRequest()
         {
         }

@@ -6,6 +6,10 @@ using Split_Receipt.Payload;
 
 namespace Split_Receipt.Services.Mappers
 {
+    /// <summary>
+    /// Class <c>GroupMapper</c> contains method for mapping Group's
+    /// object instances.
+    /// </summary>
     public class GroupMapper
     {
         private readonly AuthDbContext _appContext;

@@ -5,6 +5,10 @@ using System;
 
 namespace Split_Receipt.Services.Interfaces
 {
+    /// <summary>
+    /// Interface <t>IGroupService</t> that contains methods for operation on
+    /// <c>UserGroupResponse</c>, <c>UserGroupRequest</c> and <c>Group</c>.
+    /// </summary>
     public interface IGroupService
     {
         Group FindById(int id);

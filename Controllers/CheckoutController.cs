@@ -6,6 +6,7 @@ using Split_Receipt.Models;
 using Split_Receipt.Payload;
 using Split_Receipt.Services;
 using Split_Receipt.Services.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace Split_Receipt.Controllers
 {
@@ -20,12 +21,6 @@ namespace Split_Receipt.Controllers
             _checkoutService = checkoutService;
             _userManager = userManager;
             _groupService = group;
-        }
-
-        [Authorize]
-        public IActionResult Index()
-        {
-            return View();
         }
 
         [HttpGet]
@@ -71,7 +66,7 @@ namespace Split_Receipt.Controllers
             {
                 return Forbid();
             }
-            int succesful = _checkoutService.Save(body, user.Id, groupId);
+            int succesful = await _checkoutService.Save(body, user.Id, groupId);
             if (succesful > 0)
             {
                 return RedirectToAction("Summary", new { groupId = groupId, currencyBase = body.Currency });
@@ -79,11 +74,38 @@ namespace Split_Receipt.Controllers
             return View(body);
         }
 
+
+        [Authorize]
+        [HttpGet]
+        [Route("Checkout/Update/{checkoutId}")]
+        public async Task<IActionResult> Update(int checkoutId)
+        {
+            var checkout = await _checkoutService.FindById(checkoutId);
+            ViewBag.CheckoutId = checkoutId;
+            ViewBag.GroupId = checkout.GroupId;
+
+            CheckoutRequest request = new CheckoutRequest
+            {
+                Currency = checkout.Currency,
+                Description = checkout.Description,
+                Price = checkout.Price,
+                IsSplitted = checkout.IsSplitted
+            };
+
+            return View(request);
+        }
+
         [Authorize]
         [HttpPost]
         [Route("Checkout/Update/{checkoutId}")]
+       
         public async Task<IActionResult> Update(int checkoutId, CheckoutRequest body)
         {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.CheckoutId = checkoutId;
+                return View(body);
+            }
             var user = await _userManager.GetUserAsync(User);
             bool isUserInCheckout = _checkoutService.CheckIsUserInCheckout(user.Id, checkoutId);
             if (!isUserInCheckout)
@@ -118,22 +140,7 @@ namespace Split_Receipt.Controllers
             return RedirectToAction("Summary", new { groupId = checkout.GroupId, currencyBase = "PLN" });
         }
 
-        [Authorize]
-        [HttpGet]
-        [Route("Checkout/Update/{checkoutId}")]
-        public async Task<IActionResult> Update(int checkoutId)
-        {
-            var checkout = await _checkoutService.FindById(checkoutId);
-            ViewBag.CheckoutId = checkoutId;
-            ViewBag.GroupId = checkout.GroupId;
-            
-            CheckoutRequest request = new CheckoutRequest();
-            request.Currency = checkout.Currency;
-            request.Description = checkout.Description;
-            request.Price = checkout.Price;
-            request.IsSplitted = checkout.IsSplitted;
-            return View(request);
-        }
+        
 
         [Authorize]
         [HttpGet]

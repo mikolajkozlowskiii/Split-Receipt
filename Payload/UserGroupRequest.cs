@@ -2,6 +2,11 @@
 
 namespace Split_Receipt.Payload
 {
+    /// <summary>
+    ///  Class <c>UserGroupRequest</c> is a DTO's object
+    ///  beetween view's request of creating group with assigned users to this group
+    ///  and saved User_Group object instance in DB.
+    /// </summary>
     public class UserGroupRequest
     {
         public UserGroupRequest(){ }

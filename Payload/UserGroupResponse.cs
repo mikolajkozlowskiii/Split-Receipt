@@ -1,5 +1,9 @@
 ﻿namespace Split_Receipt.Payload
 {
+    /// <summary>
+    ///  Class <c>UserGroupResponse</c> is a DTO's object
+    ///  beetween saved User_Group object instance in DB and respond returned to view.
+    /// </summary>
     public class UserGroupResponse
     {
         public UserGroupResponse()

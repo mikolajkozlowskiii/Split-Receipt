@@ -2,6 +2,10 @@
 {
     public class CheckoutSummary
     {
+        /// <summary>
+        /// Class <c>CheckoutSummary</c> is a class that represent summary of all checkouts
+        /// for specific Group.
+        /// </summary>
         public CheckoutSummary()
         {
         }

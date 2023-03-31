@@ -2,6 +2,12 @@
 
 namespace Split_Receipt.Models
 {
+    /// <summary>
+    /// Class <c>Group</c> is a model for groups saved in DB. 
+    /// The group class is used mainly because of the possibility of creating
+    /// different names for the checkouts of the members.
+    /// name for users 
+    /// </summary>
     public class Group
     {
         public Group()

@@ -11,6 +11,9 @@ using System.Text.RegularExpressions;
 
 namespace Split_Receipt.Services
 {
+    /// <summary>
+    /// Class <c>CheckoutService</c> implements method from <t>ICheckoutService</t>.
+    /// </summary>
     public class CheckoutService : ICheckoutService
     {
         private readonly AuthDbContext _appContext;
@@ -29,17 +32,27 @@ namespace Split_Receipt.Services
             _checkoutMapper = checkoutMapper;
         }
 
-        public int Delete(int id)
+        /// <summary>
+        /// This method deletes from DB instance of Checkout's object.
+        /// </summary>
+        /// <param name="checkoutId"></param> is an id of target Checkout's object removed.
+        /// <returns></returns>
+        public int Delete(int checkoutId)
         {
-            var checkout = _appContext.Checkouts.Find(id);
+            var checkout = _appContext.Checkouts.Find(checkoutId);
             _appContext.Checkouts.Remove(checkout);
             _appContext.SaveChanges();
-            return id;
+            return checkoutId;
         }
 
-        public async Task<CheckoutResponse> FindById(int id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="checkoutId"></param>
+        /// <returns></returns>
+        public async Task<CheckoutResponse> FindById(int checkoutId)
         {
-            var checkout = _appContext.Checkouts.FirstOrDefault(x => x.Id == id);
+            var checkout = _appContext.Checkouts.FirstOrDefault(x => x.Id == checkoutId);
             var user = await _userManager.FindByIdAsync(checkout.UserId);
     
             CheckoutResponse response =  _checkoutMapper.map(checkout, user.Email);
@@ -119,7 +132,7 @@ namespace Split_Receipt.Services
         }
 
 
-        public int Save(CheckoutRequest requestCheckout, string userId, int groupId)
+        public async Task<int> Save(CheckoutRequest requestCheckout, string userId, int groupId)
         {
             Checkout checkout = new Checkout
             {

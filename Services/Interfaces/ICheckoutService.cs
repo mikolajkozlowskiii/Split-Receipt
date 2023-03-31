@@ -10,8 +10,7 @@ namespace Split_Receipt.Services.Interfaces
         Task<List<CheckoutResponse>> FindlAllByGroupId(int groupId, string sortBy);
         Task<List<CheckoutResponse>> FindAllByUserID(string userId);
         Task<CheckoutSummary> CreateCheckoutSummary(string userEmail, string currencyBase, int groupId, string sortBy);
-
-        int Save(CheckoutRequest checkout, string userId, int groupId);
+        Task<int> Save(CheckoutRequest requestCheckout, string userId, int groupId);
         int Update(CheckoutRequest checkoutRequest, int checkoutId);
         int Delete(int id);
         bool CheckIsUserInCheckout(string UserId, int checkoutId);

@@ -14,15 +14,12 @@ namespace Split_Receipt.Services
             _httpClient = httpClient;
         }
 
-        public void Get(string currencyBase)
-        {
-            var url = $"https://api.exchangerate.host/latest?base=USD";
-
-            var web = new WebClient();
-
-            var response = web.DownloadString(url);
-        }
-        public async Task<CurrencyResponse> GetCurrencyData(string currencyBase)
+        /// <summary>
+        /// This method is used for consuming data from currency api.
+        /// </summary>
+        /// <param name="currencyBase"></param> based on this are returned exchange rates.
+        /// <returns>CurrencyResponse object instance with all rates </returns>
+        public async Task<CurrencyResponse> GetLatestCurrencyData(string currencyBase)
         {
             var response = await _httpClient.GetAsync($"https://api.exchangerate.host/latest?base={currencyBase}");
             if (response.IsSuccessStatusCode)
@@ -30,7 +27,6 @@ namespace Split_Receipt.Services
                 var content = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<CurrencyResponse>(content);
             }
-
             return null;
         }
         public async Task<Decimal> GetRate(string currencyBase, string quoteCurrency)
@@ -39,7 +35,7 @@ namespace Split_Receipt.Services
             {
                 return 1;
             }
-            var currencyData = await GetCurrencyData(currencyBase);
+            var currencyData = await GetLatestCurrencyData(currencyBase);
             decimal value;
             currencyData.Rates.TryGetValue(quoteCurrency, out value);
             return value;
