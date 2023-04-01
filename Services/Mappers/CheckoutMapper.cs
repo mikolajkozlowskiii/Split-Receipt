@@ -29,7 +29,8 @@ namespace Split_Receipt.Services.Mappers
                 GroupId = checkout.GroupId,
                 UserId = checkout.UserId,
                 CheckoutId = checkout.Id,
-                CreatedAt = checkout.CreatedAt};
+                CreatedAt = checkout.CreatedAt
+            };
         }
 
         public async Task<List<CheckoutResponse>> map(List<Checkout> checkouts)
@@ -55,14 +56,3 @@ namespace Split_Receipt.Services.Mappers
         }
     }
 }
-
-
-/*
- 
- 
- 
-
- 
-   
- 
- */

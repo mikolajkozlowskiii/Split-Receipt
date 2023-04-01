@@ -16,11 +16,16 @@ namespace Split_Receipt.Services
 
         /// <summary>
         /// This method is used for consuming data from currency api.
+        /// All values of rates are latest.
         /// </summary>
         /// <param name="currencyBase"></param> based on this are returned exchange rates.
-        /// <returns>CurrencyResponse object instance with all rates </returns>
+        /// <returns>CurrencyResponse object instance with all latest rates.</returns>
         public async Task<CurrencyResponse> GetLatestCurrencyData(string currencyBase)
         {
+            if(currencyBase == null)
+            {
+                return null;
+            }
             var response = await _httpClient.GetAsync($"https://api.exchangerate.host/latest?base={currencyBase}");
             if (response.IsSuccessStatusCode)
             {
@@ -29,6 +34,17 @@ namespace Split_Receipt.Services
             }
             return null;
         }
+
+        /// <summary>
+        /// This method is used for getting rate of specific currency based on specific currency.
+        /// </summary>
+        /// <param name="currencyBase"></param> is a base of currency transferred to
+        /// GetLatestCurrencyData method.
+        /// <param name="quoteCurrency"></param> is a quote currency for which rate is extract
+        /// from GetLatestCurrencyData method.
+        /// <returns>If currency base and quote currency are the same it returns 1.
+        /// Otherwise it returns answer from GetLatestCurrencyData, more precisely rate of
+        /// that instance.</returns>
         public async Task<Decimal> GetRate(string currencyBase, string quoteCurrency)
         {
             if (quoteCurrency.Equals(currencyBase))

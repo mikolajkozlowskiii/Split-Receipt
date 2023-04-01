@@ -3,6 +3,10 @@ using Split_Receipt.Payload;
 
 namespace Split_Receipt.Services.Interfaces
 {
+    /// <summary>
+    /// Interface <t>ICheckoutService</t> that contains methods for operation on
+    /// <c>CheckoutResponse</c>, <c>CheckoutRequest</c> and <c>CheckoutSummary</c>.
+    /// </summary>
     public interface ICheckoutService
     {
         Task<CheckoutResponse> FindById(int id);

@@ -34,6 +34,43 @@
         public int GroupId { get; set; }
         public DateTime CreatedAt { get; set; }
 
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || !(obj is CheckoutResponse))
+            {
+                return false;
+            }
+
+            CheckoutResponse other = (CheckoutResponse)obj;
+
+            return this.CheckoutId == other.CheckoutId &&
+                   this.UserEmail == other.UserEmail &&
+                   this.Price == other.Price &&
+                   this.Currency == other.Currency &&
+                   this.IsSplitted == other.IsSplitted &&
+                   this.Description == other.Description &&
+                   this.UserId == other.UserId &&
+                   this.GroupId == other.GroupId &&
+                   this.CreatedAt == other.CreatedAt;
+        }
+
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            hash = hash * 23 + this.CheckoutId.GetHashCode();
+            hash = hash * 23 + (this.UserEmail ?? "").GetHashCode();
+            hash = hash * 23 + this.Price.GetHashCode();
+            hash = hash * 23 + (this.Currency ?? "").GetHashCode();
+            hash = hash * 23 + this.IsSplitted.GetHashCode();
+            hash = hash * 23 + (this.Description ?? "").GetHashCode();
+            hash = hash * 23 + (this.UserId ?? "").GetHashCode();
+            hash = hash * 23 + this.GroupId.GetHashCode();
+            hash = hash * 23 + this.CreatedAt.GetHashCode();
+
+            return hash;
+        }
+
         public override string? ToString()
         {
             return "User: " + UserEmail + ", price " + Price + ", currency " + Currency + ", isSpliited " + IsSplitted + ", desc: " + Description + ", date:" + CreatedAt;
