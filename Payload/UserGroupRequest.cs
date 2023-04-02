@@ -22,7 +22,7 @@ namespace Split_Receipt.Payload
         public string GroupName { get; set; }
 
         [Required]
-        //[ExistingEmails]
+        [EmailAddress(ErrorMessage = "Invalid Email Address.")]
         public List<String> Emails { get; set; }
 
     }

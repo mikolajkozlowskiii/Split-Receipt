@@ -32,6 +32,7 @@
     <div class="form-group">
             <label style="color: var(--text);width: 300px;" asp-for="Price"></label>
             <input asp-for="Price" class="form-control" value="@Model.Price" />
+            <span asp-validation-for="Price" class="text-danger"></span>
         <div class="form-group">
                 <label style="color: var(--text)" asp-for="Currency"></label>
             <select asp-for="Currency" class="form-control">
@@ -59,6 +60,7 @@
         <div class="form-group">
                 <label style="color: var(--text);width: 300px;" asp-for="Description"></label>
                 <input asp-for="Description" class="form-control" value="@Model.Description" />
+                <span asp-validation-for="Description" class="text-danger"></span>
         </div>
 
         <input type="hidden" name="checkoutId" value="@ViewBag.checkoutId" />
