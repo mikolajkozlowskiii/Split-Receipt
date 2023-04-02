@@ -53,19 +53,20 @@ namespace Split_Receipt.Services.Tests
             var _currencyServiceMock = new Mock<ICurrencyService>();
             _currencyServiceMock
                 .Setup(x => x.GetRate("PLN", "EUR"))
-                .ReturnsAsync(4.7m);
+                .ReturnsAsync(1 / 4.7m);
             _currencyServiceMock
                 .Setup(x => x.GetRate("PLN", "PLN"))
                 .ReturnsAsync(1.0m);
             _currencyServiceMock
                 .Setup(x => x.GetRate("PLN", "GBP"))
-                .ReturnsAsync(5.0m);
+                .ReturnsAsync(1 / 5.0m);
             _currencyServiceMock
                .Setup(x => x.GetRate("EUR", "PLN"))
-               .ReturnsAsync(1/4.7m);
+               .ReturnsAsync(4.7m);
             _currencyServiceMock
                 .Setup(x => x.GetRate("GBP", "PLN"))
-                .ReturnsAsync(1/5.0m);
+                .ReturnsAsync(5.0m);
+
 
             _checkoutService = new CheckoutService(_appContext, _userManagerMock.Object,
                 new GroupService(_appContext, _userManagerMock.Object, new GroupMapper(_appContext, _userManagerMock.Object)),

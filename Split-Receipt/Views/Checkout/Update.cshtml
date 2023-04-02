@@ -2,14 +2,39 @@
 @using Microsoft.AspNetCore.Mvc.Rendering
 @model Split_Receipt.Payload.CheckoutRequest
 
-<h2>Update Checkout</h2>
+<style>
+    :root {
+        --fg-color: rgb(67, 68, 73);
+        --fg-color--light: rgb(117, 118, 123);
+        --bg-color: #35363a;
+        --text: #FFF;
+    }
 
+    body {
+        background-color: var(--bg-color);
+    }
+
+    .wrapper {
+        background-color: var(--fg-color);
+        padding: 30px;
+        display: block;
+        width: 350px;
+    }
+
+    table {
+        background-color: var(--fg-color);
+    }
+</style>
+
+<div class="wrapper">
+<h2>Update Checkout</h2>
 <form method="post" asp-controller="Checkout" asp-action="Update" asp-route-groupId="@ViewBag.CheckoutId">
     <div class="form-group">
-        <label asp-for="Price"></label>
-        <input asp-for="Price" class="form-control" value="@Model.Price" />
+            <label style="color: var(--text);width: 300px;" asp-for="Price"></label>
+            <input asp-for="Price" class="form-control" value="@Model.Price" />
+            <span asp-validation-for="Price" class="text-danger"></span>
         <div class="form-group">
-            <label asp-for="Currency"></label>
+                <label style="color: var(--text)" asp-for="Currency"></label>
             <select asp-for="Currency" class="form-control">
                 <option value="PLN" selected="@Model.Currency == " PLN"">PLN</option>
                 <option value="EUR" selected="@Model.Currency == " EUR"">EUR</option>
@@ -19,31 +44,33 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="IsSplitted"></label>
+                <label style="color: var(--text);width: 300px;" asp-for="IsSplitted"></label>
             <div class="form-check">
-                <label class="form-check-label">
+                    <label style="color: var(--text)" class="form-check-label">
                     <input type="radio" asp-for="IsSplitted" value="True" checked="@Model.IsSplitted" /> Yes
                 </label>
             </div>
             <div class="form-check">
-                <label class="form-check-label">
+                    <label style="color: var(--text);width: 300px;" class="form-check-label">
                     <input type="radio" asp-for="IsSplitted" value="False" checked="@(Model.IsSplitted == false ? "checked" : null)" /> No
                 </label>
             </div>
         </div>
 
         <div class="form-group">
-            <label asp-for="Description"></label>
-            <input asp-for="Description" class="form-control" value="@Model.Description" />
+                <label style="color: var(--text);width: 300px;" asp-for="Description"></label>
+                <input asp-for="Description" class="form-control" value="@Model.Description" />
+                <span asp-validation-for="Description" class="text-danger"></span>
         </div>
 
         <input type="hidden" name="checkoutId" value="@ViewBag.checkoutId" />
-        <button type="submit" formaction="/Checkout/Update/@ViewBag.checkoutId">Update</button>
+        <button style="margin: 10px 0; margin-right: 5px;" class="btn" type="submit" formaction="/Checkout/Update/@ViewBag.checkoutId">Update</button>
  
      
         <form method="get" action="@Url.Action("Summary", new { groupId = ViewBag.GroupId, currencyBase = "PLN" })">
-            <button type="submit">CANCEL</button>
+            <button class="btn" type="submit">CANCEL</button>
         </form>
 
     </div>
 </form>
+</div>

@@ -255,14 +255,14 @@ namespace Split_Receipt.Services
 
         private async Task<Dictionary<CheckoutResponse, decimal>> GetCheckoutEquivalentPriceDict(List<CheckoutResponse> responseList)
         {
-            var baseCurrency = "PLN";
+            var quoteCurrency = "PLN";
             Dictionary<CheckoutResponse, decimal> checkoutDict = new Dictionary<CheckoutResponse, decimal>();
             foreach (var checkoutResponse in responseList)
             {
                 decimal priceInSameCurrency = 0;
                 if (checkoutResponse.Price != 0)
                 {
-                    priceInSameCurrency = await (_currencyService.GetRate(baseCurrency, checkoutResponse.Currency)) * (checkoutResponse.Price);
+                    priceInSameCurrency = await (_currencyService.GetRate(checkoutResponse.Currency, quoteCurrency)) * (checkoutResponse.Price);
                 } 
                 checkoutDict.Add(checkoutResponse, priceInSameCurrency);
             }
@@ -295,11 +295,11 @@ namespace Split_Receipt.Services
                 }
                 if (userEmail.Equals(checkout.UserEmail))
                 {
-                    total = total + currentPrice / rate;
+                    total = total + currentPrice * rate;
                 }
                 else
                 {
-                    total = total - currentPrice / rate;
+                    total = total - currentPrice * rate;
                 }
 
             }
