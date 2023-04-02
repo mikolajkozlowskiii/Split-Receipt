@@ -1,50 +1,86 @@
 ﻿@model Split_Receipt.Payload.CheckoutSummary
 
+<style>
+    :root {
+        --fg-color: rgb(67, 68, 73);
+        --fg-color--light: rgb(117, 118, 123);
+        --bg-color: #35363a;
+        --text: #FFF;
+    }
+
+    body {
+        background-color: var(--bg-color);
+    }
+
+    .wrapper {
+        background-color: var(--fg-color);
+        padding: 30px;
+        display: block;
+        width: 560px;
+    }
+
+    .summary-li {
+        background-color: var(--fg-color--light);
+        border-radius: 10px;
+        margin: 10px 0;
+        padding: 10px;
+        width: 500px;
+    }
+
+    table {
+        background-color: var(--fg-color);
+    }
+</style>
+
+
+<div class="wrapper">
+
 <h1>@Model.GroupName</h1>
-<div style="display: flex; justify-content: space-between">
-    <div style="font-weight: bold; color: @((Model.Total > 0) ? "green" : (Model.Total < 0) ? "red" : "black")">TOTAL: @Model.Total.ToString("N2")</div>
+<div style="display: flex; justify-content: space-between;">
+<div style="font-weight: bold; color: @((Model.Total > 0) ? "green" : (@Model.Total < 0) ? "red" : "black")">TOTAL: @Model.Total.ToString("N2")</div>
     <div style="display: inline-block;">
         @Html.DropDownList("currency", new SelectList(new List<string> { "PLN", "GBP", "USD", "EUR" }, Model.Currency), new { onchange = "updateCurrency()" })
     </div>
 </div>
-<div>Members: @string.Join(", ", Model.Members)</div>
+<span>Members: @string.Join(", ", Model.Members)</span>
 
 
 
-<div>
+<div style="margin: 10px 0">
     <form method="get" action="@Url.Action("SaveCheckout", new { groupId = ViewBag.GroupId})">
-        <button type="submit">ADD CHECKOUT</button>
+        <button class="btn" type="submit">ADD CHECKOUT</button>
     </form>
 
 </div>
-<div>
-    <label>SORT: </label>
+<div style="color: var(--fg-color)">
+    <label style="color: var(--text)">SORT: </label>
     @Html.DropDownList("sortBy", new SelectList(new List<string> { "Date ASC", "Date DESC", "Price ASC", "Price DESC" }), new { onchange = "updateSort()" })
 </div>
 
-<ul>
+    <ul style="list-style: none; padding: 0;">
     @foreach (var checkout in Model.Checkouts)
     {
         if (checkout.UserEmail == Model.Email)
         {
-            <li>
+            <li class="summary-li">
                 @checkout.UserEmail: @checkout.Description - @checkout.Price @checkout.Currency, is splitted: @checkout.IsSplitted, date @checkout.CreatedAt
                 <div>
                     <form method="get" action="@Url.Action("Delete", new { checkoutId = checkout.CheckoutId })">
-                        <button type="submit">DELETE</button>
+                        <button style="margin: 10px 5px;" class="btn" type="submit">DELETE</button>
                     </form>
                     <form method="get" action="@Url.Action("Update", new { checkoutId = checkout.CheckoutId })">
-                        <button type="submit">UPDATE</button>
+                        <button style="margin: 0 5px;" class="btn" type="submit">UPDATE</button>
                     </form>
                 </div>
             </li>
         }
         else
         {
-            <li>@checkout.UserEmail: @checkout.Description - @checkout.Price @checkout.Currency, is splitted: @checkout.IsSplitted, id: @checkout.CheckoutId</li>
+            <li class="summary-li">@checkout.UserEmail: @checkout.Description - @checkout.Price @checkout.Currency, is splitted: @checkout.IsSplitted</li>
         }
     }
 </ul>
+</div>
 
 <script>
     function updateCurrency() {

@@ -4,17 +4,21 @@
 }
 
 <style>
+    :root {
+        --fg-color: rgb(67, 68, 73);
+        --bg-color: #35363a;
+    }
+
     body {
-        background-color: #f2f2f2;
+        background-color: var(--bg-color);
     }
 
     .container {
         margin-top: 50px;
         margin-bottom: 50px;
         padding: 30px;
-        background-color: #fff;
+        background-color: var(--fg-color);
         border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
     h1 {
@@ -22,14 +26,14 @@
         font-weight: bold;
         margin-bottom: 30px;
         text-align: center;
-        color: #555;
+        color: #FFF;
     }
 
     p {
         font-size: 18px;
         line-height: 1.5;
         margin-bottom: 20px;
-        color: #666;
+        color: #FFF;
     }
 </style>
 
