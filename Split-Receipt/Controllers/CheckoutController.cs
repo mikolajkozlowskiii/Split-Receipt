@@ -2,11 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Split_Receipt.Areas.Identity.Data;
-using Split_Receipt.Models;
 using Split_Receipt.Payload;
-using Split_Receipt.Services;
 using Split_Receipt.Services.Interfaces;
-using System.Text.RegularExpressions;
 
 namespace Split_Receipt.Controllers
 {

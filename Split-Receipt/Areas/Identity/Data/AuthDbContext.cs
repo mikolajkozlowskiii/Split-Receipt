@@ -6,6 +6,13 @@ using Split_Receipt.Models;
 
 namespace Split_Receipt.Data;
 
+/// <summary>
+///  Class <c>AuthDbContext</c> is used to manage authentication-related data using Entity Framework.
+///  It inherits from IdentityDbContext<ApplicationUser>, indicating that it provides additional
+///  functionality to the base Identity framework. The class includes DbSets for Group, User_Group,
+///  and Checkout entities, which are used to define the relationships between users and groups,
+///  as well as checkouts made by users.
+/// </summary>
 public class AuthDbContext : IdentityDbContext<ApplicationUser>
 {
     public AuthDbContext(DbContextOptions<AuthDbContext> options)
@@ -16,9 +23,6 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        // Customize the ASP.NET Identity model and override the defaults if needed.
-        // For example, you can rename the ASP.NET Identity table names and more.
-        // Add your customizations after calling base.OnModelCreating(builder);
     }
     public DbSet<Group> Groups { get; set; }
     public DbSet<User_Group> User_Groups { get; set; }

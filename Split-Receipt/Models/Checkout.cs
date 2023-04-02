@@ -4,7 +4,12 @@ using Split_Receipt.Areas.Identity.Data;
 namespace Split_Receipt.Models
 {
     /// <summary>
-    /// Class <c>Checkout</c> is model for checkouts saved in DB.
+    /// Class <c>Checkout</c> is a model for checkouts saved in the database.
+    /// The class defines properties for checkout details such as price, currency, and description.
+    /// The properties are decorated with the Required attribute to ensure that they are not null or empty.
+    /// The class also includes a User property of type ApplicationUser and a Group property of type Group,
+    /// which represent the user who made the purchase and the group the purchase belongs to, respectively.
+    /// The class includes a ToString() method that returns a string representation of the checkout object.
     /// </summary>
     public class Checkout
     {
