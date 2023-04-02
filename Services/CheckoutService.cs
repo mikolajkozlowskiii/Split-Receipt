@@ -222,19 +222,18 @@ namespace Split_Receipt.Services
             return checkoutSummary;
         }
 
-        private async Task<List<CheckoutResponse>> Sort(string sortBy, List<CheckoutResponse> responseList)
+        public async Task<List<CheckoutResponse>> Sort(string sortBy, List<CheckoutResponse> responseList)
         {
-            var baseCurrency = "PLN";
             Dictionary<CheckoutResponse, decimal> checkoutDict;
             switch (sortBy)
             {
                 case "Price ASC":
-                    checkoutDict = await GetCheckoutEquivalentPriceDict(responseList, baseCurrency);
+                    checkoutDict = await GetCheckoutEquivalentPriceDict(responseList);
                     var sortedDict = from entry in checkoutDict orderby entry.Value ascending select entry;
                     return sortedDict.Select(entry => entry.Key).ToList();
 
                 case "Price DESC":
-                    checkoutDict = await GetCheckoutEquivalentPriceDict(responseList, baseCurrency);
+                    checkoutDict = await GetCheckoutEquivalentPriceDict(responseList);
                     var sortedDict2 = from entry in checkoutDict orderby entry.Value descending select entry;
                     return sortedDict2.Select(entry => entry.Key).ToList();
 
@@ -254,23 +253,29 @@ namespace Split_Receipt.Services
             return responseList;
         }
 
-        private async Task<Dictionary<CheckoutResponse, decimal>> GetCheckoutEquivalentPriceDict(List<CheckoutResponse> responseList, string baseCurrency)
+        private async Task<Dictionary<CheckoutResponse, decimal>> GetCheckoutEquivalentPriceDict(List<CheckoutResponse> responseList)
         {
+            var baseCurrency = "PLN";
             Dictionary<CheckoutResponse, decimal> checkoutDict = new Dictionary<CheckoutResponse, decimal>();
             foreach (var checkoutResponse in responseList)
             {
                 decimal priceInSameCurrency = 0;
                 if (checkoutResponse.Price != 0)
                 {
-                    priceInSameCurrency = await (_currencyService.GetRate(baseCurrency, checkoutResponse.Currency)) / (checkoutResponse.Price);
+                    priceInSameCurrency = await (_currencyService.GetRate(baseCurrency, checkoutResponse.Currency)) * (checkoutResponse.Price);
                 } 
                 checkoutDict.Add(checkoutResponse, priceInSameCurrency);
             }
             return checkoutDict;
         }      
 
-        private async Task<decimal> ComputeTotalBalance(string userEmail, string currencyBase, int numOfMemebers, List<CheckoutResponse> checkouts)
+        public async Task<decimal> ComputeTotalBalance(string userEmail, string currencyBase, int numOfMemebers, List<CheckoutResponse> checkouts)
         {
+            if(numOfMemebers < 2)
+            {
+                throw new InvalidOperationException("Group must have at least 2 memebers.");
+            }
+
             decimal total = 0;
             foreach (var checkout in checkouts)
             {
@@ -284,17 +289,17 @@ namespace Split_Receipt.Services
                 {
                     currentPrice = currentPrice / numOfMemebers;
                 }
-                else
+                else if(!checkout.IsSplitted && !userEmail.Equals(checkout.UserEmail)) 
                 {
                     currentPrice = currentPrice / (numOfMemebers - 1);
                 }
                 if (userEmail.Equals(checkout.UserEmail))
                 {
-                    total = total + currentPrice / rate;
+                    total = total + currentPrice * rate;
                 }
                 else
                 {
-                    total = total - currentPrice / rate;
+                    total = total - currentPrice * rate;
                 }
 
             }

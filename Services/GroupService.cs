@@ -222,6 +222,10 @@ namespace Split_Receipt.Services
         /// <returns>True if user belongs to specific group. Otherwise false.</returns>
         public async Task<Boolean> CheckIsUserInGroup(string userId, int groupId)
         {
+            if(await _userManager.FindByIdAsync(userId) == null)
+            {
+                throw new InvalidOperationException("User id: " + userId + " is not in DB.");
+            }
             return _appContext.User_Groups.Any(x => x.GroupId == groupId && x.UserId == userId);
         }
 
