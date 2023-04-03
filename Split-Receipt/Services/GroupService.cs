@@ -148,7 +148,9 @@ namespace Split_Receipt.Services
 
         /// <summary>
         /// This method is used for take UserGroupRequest's object instance body. 
-        /// Then it call Save method and save object in DB.
+        /// Then it call Save method and save object in DB. Due to private method 
+        /// GetUniqueExistingUsers(request.Emails) this method is procted from save empty email,
+        /// save email not existed in user's table in DB or save more than once member with the same email.
         /// </summary>
         /// <param name="request"></param> is a body of UserGroupRequest's object instance.
         /// <returns>True if save operation ended successfully. Otherwise false.</returns>

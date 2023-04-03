@@ -221,6 +221,16 @@ namespace Split_Receipt.Services
             return checkoutSummary;
         }
 
+        /// <summary>
+        /// This method sorts a list of CheckoutResponse objects based on the provided sort criteria.
+        /// If the sortBy parameter is set to "Price ASC" or "Price DESC", it calculates the equivalent price of each checkout using the GetCheckoutEquivalentPriceDict() method,
+        /// and sorts the dictionary based on the calculated prices. The method then returns the sorted dictionary's keys as a list of CheckoutResponse objects.
+        /// If the sortBy parameter is set to "Date ASC" or "Date DESC", it sorts the responseList directly based on the CreatedAt property.
+        /// If the sortBy parameter is not recognized, it sorts the responseList based on CreatedAt by default.
+        /// </summary>
+        /// <param name="sortBy">The sort criteria</param>
+        /// <param name="responseList">The list of CheckoutResponse objects to be sorted</param>
+        /// <returns>A sorted list of CheckoutResponse objects</returns>
         public async Task<List<CheckoutResponse>> Sort(string sortBy, List<CheckoutResponse> responseList)
         {
             Dictionary<CheckoutResponse, decimal> checkoutDict;
@@ -266,8 +276,16 @@ namespace Split_Receipt.Services
                 checkoutDict.Add(checkoutResponse, priceInSameCurrency);
             }
             return checkoutDict;
-        }      
+        }
 
+        /// <summary>
+        /// Computes the total balance for a user within a group based on their checkouts and the number of group members.
+        /// </summary>
+        /// <param name="userEmail">The email of the user to compute the balance for.</param>
+        /// <param name="quoteCurrency">The currency to convert the checkouts to for computing the balance.</param>
+        /// <param name="numOfMemebers">The number of members in the group.</param>
+        /// <param name="checkouts">The list of checkouts for the group.</param>
+        /// <returns>The total balance for the user in the specified currency.</returns>
         public async Task<decimal> ComputeTotalBalance(string userEmail, string quoteCurrency, int numOfMemebers, List<CheckoutResponse> checkouts)
         {
             if(numOfMemebers < 2)
