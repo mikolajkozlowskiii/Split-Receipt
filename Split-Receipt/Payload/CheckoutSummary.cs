@@ -3,8 +3,11 @@
     public class CheckoutSummary
     {
         /// <summary>
-        /// Class <c>CheckoutSummary</c> is a class that represent summary of all checkouts
-        /// for specific Group.
+        /// The <c>CheckoutSummary</c> class is a representation of a summary of all the checkouts
+        /// made for a specific group. This class contains properties such as <c>Email</c>,
+        /// <c>Currency</c>, <c>GroupName</c>, <c>Total</c>, <c>Checkouts</c>, and <c>Members</c>
+        /// which are used to store email, currency, group name, total amount, a list of checkouts,
+        /// and a list of members respectively.
         /// </summary>
         public CheckoutSummary()
         {

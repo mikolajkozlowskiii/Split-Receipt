@@ -6,9 +6,10 @@ using System;
 namespace Split_Receipt.Services.Interfaces
 {
     /// <summary>
-    /// Interface <t>IGroupService</t> that contains methods for operation on
-    /// <c>UserGroupResponse</c>, <c>UserGroupRequest</c> and <c>Group</c>.
-    /// </summary>
+    /// The <c>IGroupService</c> interface defines methods for operations on <c>UserGroupResponse</c>,
+    /// <c>UserGroupRequest</c>, and <c>Group</c> classes. It provides methods for finding, saving,
+    /// and checking membership of a user in a group. Additionally, it provides methods for retrieving
+    /// all user groups, user groups by user ID, and member IDs and emails for a given group.
     public interface IGroupService
     {
         Group FindById(int id);

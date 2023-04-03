@@ -2,18 +2,35 @@
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    :root {
+        --fg-color: rgb(67, 68, 73);
+        --fg-color--light: rgb(117, 118, 123);
+        --bg-color: #35363a;
+        --text: #FFF;
+    }
+
+    body {
+        background-color: var(--bg-color);
+    }
+
+    .wrapper {
+        background-color: var(--fg-color);
+    }
+</style>
+
 <div class="row justify-content-center">
     <div class="col-5 mt-5">
-        <div class="card login-logout-card">
+        <div class="card login-logout-card wrapper">
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs">
                     <li class="nav-item">
-                        <a class="nav-link" href="/Identity/Account/Login">
+                        <a style="color: var(--fg-color--light)" class="nav-link" href="/Identity/Account/Login">
                             Log in
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Identity/Account/Register">
+                        <a style="color: var(--fg-color--light)"  class="nav-link" href="/Identity/Account/Register">
                             Register
                         </a>
                     </li>
@@ -29,6 +46,8 @@
         </div>
     </div>
 </div>
+
+<!-- !!!  -->
 
 @section Scripts{
     @await RenderSectionAsync("Scripts", required: false)

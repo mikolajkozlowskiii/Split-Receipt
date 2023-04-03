@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Split_Receipt.Areas.Identity.Data;
 using Split_Receipt.Data;
 using Split_Receipt.Models;
@@ -7,14 +6,14 @@ using Split_Receipt.Payload;
 using Split_Receipt.Services.Interfaces;
 using Split_Receipt.Services.Mappers;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace Split_Receipt.Services
 {
     /// <summary>
-    /// Class <c>CheckoutService</c> implements method from <t>ICheckoutService</t>.
-    /// </summary>
+    /// The <c>CheckoutService</c> class is an implementation of the <t>ICheckoutService</t> interface.
+    /// It provides functionality for saving, updating, deleting and finding Checkout objects in the database.
+    /// The class contains a constructor that initializes the necessary dependencies such as <c>AuthDbContext</c>,
+    /// <c>UserManager<ApplicationUser></c>, <c>IGroupService</c>, <c>ICurrencyService</c> and <c>CheckoutMapper</c>.
     public class CheckoutService : ICheckoutService
     {
         private readonly AuthDbContext _appContext;

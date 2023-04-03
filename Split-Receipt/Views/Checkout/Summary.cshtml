@@ -65,7 +65,7 @@
             <li class="summary-li">
                 @checkout.UserEmail: @checkout.Description - @checkout.Price @checkout.Currency, is splitted: @checkout.IsSplitted, date @checkout.CreatedAt
                 <div>
-                    <form method="get" action="@Url.Action("Delete", new { checkoutId = checkout.CheckoutId })">
+                    <form method="delete" action="@Url.Action("Delete", new { checkoutId = checkout.CheckoutId })">
                         <button style="margin: 10px 5px;" class="btn" type="submit">DELETE</button>
                     </form>
                     <form method="get" action="@Url.Action("Update", new { checkoutId = checkout.CheckoutId })">

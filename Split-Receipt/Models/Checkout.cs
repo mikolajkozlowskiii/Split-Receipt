@@ -1,6 +1,10 @@
 ﻿using Microsoft.Build.Framework;
 using Split_Receipt.Areas.Identity.Data;
 
+/// <summary>
+/// The <c>Split_Receipt.Models</c> namespace contains all the model classes used in the Split Receipt application.
+/// These classes define the structure of the database tables and relationships between them.
+/// </summary>
 namespace Split_Receipt.Models
 {
     /// <summary>
@@ -16,7 +20,7 @@ namespace Split_Receipt.Models
         public Checkout()
         {
         }
-
+        
         public Checkout(int id, decimal price, string currency, bool isSplitted,
             string description, string userId, int groupId, ApplicationUser user, Group group)
         {
@@ -29,6 +33,7 @@ namespace Split_Receipt.Models
             GroupId = groupId;
             CreatedAt = DateTime.Now;
         }
+
         public int Id { get; set; }
         [Required]
         public decimal Price { get; set; }

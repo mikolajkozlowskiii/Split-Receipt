@@ -5,6 +5,10 @@ using System.Net;
 
 namespace Split_Receipt.Services
 {
+    /// <summary>
+    /// The <c>CurrencyService</c> class is responsible for consuming data from a currency API and getting the exchange rate of a specific currency.
+    /// The class contains two methods, GetLatestCurrencyData and GetRate.
+    /// </summary>
     public class CurrencyService : ICurrencyService
     {
         private readonly HttpClient _httpClient;

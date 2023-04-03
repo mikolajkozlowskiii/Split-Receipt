@@ -1,8 +1,13 @@
 ﻿namespace Split_Receipt.Payload
 {
     /// <summary>
-    ///  Class <c>CheckoutResponse</c> is a DTO's object
-    ///  beetween saved checkout in DB and respond returned to view.
+    ///  The <c>CheckoutResponse</c> class in the <c>Split_Receipt.Payload</c>
+    ///  namespace is a Data Transfer Object (DTO) that represents a checkout
+    ///  response object between a saved checkout in the database and the response
+    ///  sent back to the view. It contains various properties such as checkout id,
+    ///  user email, price, currency, etc. that are used to build the response object.
+    ///  Additionally, it overrides the Equals(), GetHashCode(), and ToString() methods
+    ///  to provide functionality for comparing and displaying the object.
     /// </summary>
     public class CheckoutResponse
     {

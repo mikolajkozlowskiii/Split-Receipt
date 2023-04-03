@@ -6,7 +6,8 @@ namespace Split_Receipt.Models
     /// Class <c>Group</c> is a model for groups saved in DB. 
     /// The group class is used mainly because of the possibility of creating
     /// different names for the checkouts of the members.
-    /// name for users 
+    /// The <see cref="Name"/> property is decorated with [Required], [MinLength(2)], [MaxLength(20)] attributes 
+    /// to ensure that the group name is not null or empty, and has a minimum and maximum length limit.
     /// </summary>
     public class Group
     {
@@ -21,6 +22,7 @@ namespace Split_Receipt.Models
         }
 
         public int Id { get; set; }
+
         [Required]
         [MinLength(2)]
         [MaxLength(20)]

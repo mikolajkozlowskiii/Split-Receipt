@@ -10,6 +10,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Split_Receipt.Services
 {
+    /// <summary>
+    /// The <c>GroupService</c> class contains methods related to groups such as finding groups by their id, finding all groups,
+    /// saving a group in the database, finding all user groups, finding all user groups belonging to a specific user,
+    /// finding all user groups belonging to a specific user and mapping them to user group response objects,
+    /// saving a list of user groups in the database.
+    /// </summary>
     public class GroupService : IGroupService
     {
         private readonly AuthDbContext _appContext;

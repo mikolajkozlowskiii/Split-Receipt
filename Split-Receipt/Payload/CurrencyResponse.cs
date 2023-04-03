@@ -1,8 +1,9 @@
 ﻿namespace Split_Receipt.Payload
 {
     /// <summary>
-    ///  Class <c>CurrencyResponse</c> is a class that consume data from internal 
-    ///  currency api.
+    ///  The <c>CurrencyResponse</c> class is a representation of the data
+    ///  received from an internal currency API. It contains information about the base currency,
+    ///  the date of the exchange rates, and a dictionary of currency rates with their respective values.
     /// </summary>
     public class CurrencyResponse
     {

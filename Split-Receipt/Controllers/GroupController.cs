@@ -1,20 +1,21 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Split_Receipt.Areas.Identity.Data;
-using Split_Receipt.Data;
 using Split_Receipt.Models;
 using Split_Receipt.Payload;
-using Split_Receipt.Services;
 using Split_Receipt.Services.Interfaces;
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing.Drawing2D;
 
 namespace Split_Receipt.Controllers
 {
+
+    /// <summary>
+    /// Class <c>GroupController</c> is responsible for handling group-related actions
+    /// in the Split Receipt application. It depends on two services: IGroupService,
+    /// which provides group-related functionality, and UserManager<ApplicationUser>,
+    /// which manages user information
+    /// </summary>
     public class GroupController : Controller
     {
         private readonly IGroupService _groupService;
@@ -27,6 +28,7 @@ namespace Split_Receipt.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetAllGroups()
         {
             var groups = _groupService.FindAll();
@@ -35,6 +37,7 @@ namespace Split_Receipt.Controllers
 
 
         [HttpGet]
+        [Authorize]
         public IActionResult CreateGroup()
         {
             return View();
@@ -42,6 +45,7 @@ namespace Split_Receipt.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public IActionResult CreateGroup(Group body)
         {
             if (ModelState.IsValid || String.IsNullOrEmpty(body.Name))
@@ -55,14 +59,16 @@ namespace Split_Receipt.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllUserGroups()
         {
             var user_groups = await _groupService.FindAllUserGroups();
             return View(user_groups);
         }
 
-        [Authorize]
+
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> YourGroups()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -72,6 +78,7 @@ namespace Split_Receipt.Controllers
 
 
         [HttpGet]
+        [Authorize]
         public IActionResult CreateUserGroup()
         {
             return View();
@@ -79,6 +86,7 @@ namespace Split_Receipt.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateUserGroup(UserGroupRequest body) 
         {
             body.Emails.Add(User.Identity.Name);

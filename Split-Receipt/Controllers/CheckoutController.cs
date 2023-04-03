@@ -5,8 +5,17 @@ using Split_Receipt.Areas.Identity.Data;
 using Split_Receipt.Payload;
 using Split_Receipt.Services.Interfaces;
 
+/// <summary>
+/// The namespace containing all the controllers for the Split_Receipt web application.
+/// </summary>
 namespace Split_Receipt.Controllers
 {
+
+    /// <summary>
+    /// Class <c>CheckoutController</c> is responsible for managing the checkout process for a group of users.
+    /// The controller has several methods decorated with the [Authorize] attribute,
+    /// which means that the user must be authenticated before accessing them.
+    /// </summary>
     public class CheckoutController : Controller
     {
         private readonly ICheckoutService _checkoutService;

@@ -4,16 +4,21 @@ using System.ComponentModel.DataAnnotations;
 namespace Split_Receipt.Models
 {
     /// <summary>
-    /// Class <c>User_Group</c> is a model saved in DB, for relation on Group and Checkout tables.
-    /// Referencing to specific <f>UserId</f> or/and <f>GroupId</f> we can achievie full information about
-    /// which user belongs to which group.
+    /// The <c>User_Group</c> class is a model that represents the many-to-many relationship
+    /// between the <c>Group</c> and <c>Checkout</c> models in the database.
+    /// This class includes a foreign key reference to the <c>UserId</c> and <c>GroupId</c> properties,
+    /// which allows us to retrieve information about which user belongs to which group.
+    /// The properties are decorated with the Required attribute to ensure that they are not null or empty.
+    /// The class also includes a <c>User</c> property of type <c>ApplicationUser</c>
+    /// and a <c>Group</c> property of type <c>Group</c>, which represent the user and group entities, respectively.
+    /// The class includes a <c>ToString()</c> method that returns a string representation of the <c>User_Group</c> object.
     /// </summary>
     public class User_Group
     {
         public User_Group()
         {
         }
-
+        
         public User_Group(int groupId, string userId) 
         {
             GroupId = groupId;

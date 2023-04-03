@@ -3,9 +3,14 @@
 namespace Split_Receipt.Payload
 {
     /// <summary>
-    ///  Class <c>UserGroupRequest</c> is a DTO's object
-    ///  beetween view's request of creating group with assigned users to this group
-    ///  and saved User_Group object instance in DB.
+    ///  The <c>UserGroupRequest</c> class is a DTO (Data Transfer Object)
+    ///  that represents the information sent between the client view and
+    ///  the database when creating a new group with assigned users.
+    ///  It contains properties for the group name and a list of emails
+    ///  representing the group members. The <c>Required</c> attribute
+    ///  ensures that these properties are not null or empty, while the
+    ///  <c>MinLength</c> and <c>MaxLength</c> attributes provide
+    ///  constraints on the length of the group name.
     /// </summary>
     public class UserGroupRequest
     {
@@ -22,8 +27,6 @@ namespace Split_Receipt.Payload
         public string GroupName { get; set; }
 
         [Required]
-        //[ExistingEmails]
         public List<String> Emails { get; set; }
-
     }
 }
